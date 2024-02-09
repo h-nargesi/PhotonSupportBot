@@ -1,0 +1,11 @@
+{
+  "welcome": "سلام!\nبرای اطلاع از جزئیات اکانت خود، 'user' را به همراه نام اکانت و رمز عبور خود ارسال کنید.\n بطور مثال:\n/user U0001@ry password",
+  "user": {
+    "empty-request": "نام اکانت خود و رمز عبور خود را وارد کنید!",
+    "empty-result": "هیچ اکانتی یافت نشد!",
+    "response-day": " و {} روز",
+    "response-hour": " و {} ساعت",
+    "response-data": " و {} گیگ",
+    "response-no-limit": " و {} گیگ"
+  }
+}

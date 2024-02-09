@@ -1,0 +1,6 @@
+token.txt
+database.json
+
+*.zip
+
+**/__pycache__/
