@@ -1,9 +1,15 @@
 import mysql.connector
+import datetime as dt
 import files
+
+class CacheItem:
+    Time = None
+    Data = None
 
 QUERY_USER_INFO = files.GetQueryUserInfo()
 CONFIGURATION = files.getConfiguration()
 DATABASE = files.getDatabaseInfo()
+CACHE = dict()
 
 def GetAllUserInfoByPhone(phone):
     query = QUERY_USER_INFO.replace("where", "where phone = %s")
@@ -18,6 +24,12 @@ def GetUSerInfoByPassword(username, password):
     return ExecuteQuery(query, (username, password))
 
 def ExecuteQuery(query, values):
+    ClearCache()
+    
+    key = " ".join(values)
+    if key in CACHE:
+        return CACHE[key].data
+
     result = []
 
     try:
@@ -44,4 +56,20 @@ def ExecuteQuery(query, values):
         if cursor is not None: cursor.close()
         if cnx is not None: cnx.close()
 
+    result = "\n".join(result)
+    CACHE[key] = {
+        'time': dt.datetime.now(),
+        'data': result
+    }
+
     return result
+
+def ClearCache():
+    cache = dict()
+    index_time = dt.datetime.now() - dt.timedelta(minutes=5)
+
+    for key, value in CACHE:
+        if value.time >= index_time:
+            cache[key] = value
+
+    CACHE = cache
