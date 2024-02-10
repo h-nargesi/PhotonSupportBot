@@ -1,11 +1,7 @@
 {
-  "welcome": "سلام!\nبرای اطلاع از جزئیات اکانت خود، 'user' را به همراه نام اکانت و رمز عبور خود ارسال کنید.\n بطور مثال:\n/user U0001@ry password",
+  "welcome": "سلام<br />برای اطلاع از جزئیات اکانت خود، <span style='direction: ltr'>'/user'</span> را به همراه نام اکانت و رمز عبور خود ارسال کنید.<br />بطور مثال:<br /><span style='font-weight: bold'>/user U0001@ry password</span>",
   "user": {
     "empty-request": "نام اکانت خود و رمز عبور خود را وارد کنید!",
-    "empty-result": "هیچ اکانتی یافت نشد!",
-    "response-day": " و {} روز",
-    "response-hour": " و {} ساعت",
-    "response-data": " و {} گیگ",
-    "response-no-limit": " و {} گیگ"
+    "empty-result": "هیچ اکانتی یافت نشد!"
   }
 }
