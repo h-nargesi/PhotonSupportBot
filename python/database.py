@@ -8,6 +8,7 @@ class CacheItem:
 
 QUERY_USER_INFO = files.GetQueryUserInfo()
 CONFIGURATION = files.getConfiguration()
+MESSAGES = files.getMessages()
 DATABASE = files.getDatabaseInfo()
 CACHE = dict()
 
@@ -29,6 +30,11 @@ def ExecuteQuery(query, values):
     key = " ".join(values)
     if key in CACHE:
         return CACHE[key].data
+
+    CACHE[key] = {
+        'time': dt.datetime.now(),
+        'data': MESSAGES['please-wait']
+    }
 
     result = []
 
@@ -66,7 +72,7 @@ def ExecuteQuery(query, values):
 
 def ClearCache():
     cache = dict()
-    index_time = dt.datetime.now() - dt.timedelta(minutes=5)
+    index_time = dt.datetime.now() - dt.timedelta(minutes=CONFIGURATION['cache-minutes'])
 
     for key, value in CACHE:
         if value.time >= index_time:
