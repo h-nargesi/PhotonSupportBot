@@ -26,19 +26,19 @@ def ExecuteQuery(query, values):
         cursor.execute(query, values)
 
         for (username, left_days, left_hours, giga_left) in cursor:
-            user_result = ""
+            account_info = ""
 
             if left_days is not None and left_days > 0:
-                user_result += " and {} days".format(left_days)
+                account_info += " and {} days".format(left_days)
             if left_hours is not None and (left_hours > 0 or left_days <= 0):
-                user_result += " and {} hours".format(left_hours)
+                account_info += " and {} hours".format(left_hours)
             if giga_left is not None:
-                user_result += " and {} GB".format(giga_left)
+                account_info += " and {} GB".format(giga_left)
 
-            if len(user_result) > 0: user_result = "*{}* remains".format(user_result[5:])
-            else: user_result = "no limit!"
+            if len(account_info) > 0: account_info = "*{}* remains".format(account_info[5:])
+            else: account_info = "no limit!"
             
-            result.append("{}: {}".format(username, user_result))
+            result.append("{}: {}".format(username, account_info))
 
     finally:
         if cursor is not None: cursor.close()
