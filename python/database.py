@@ -55,6 +55,8 @@ def ExecuteQuery(query, values):
     return current_item.Data
 
 def ClearCache():
+    global CACHE
+
     temp = dict()
     index_time = dt.datetime.now() - dt.timedelta(minutes=CONFIGURATION['cache-minutes'])
 
@@ -62,7 +64,7 @@ def ClearCache():
         if value.Time >= index_time:
             temp[key] = value
 
-    return temp
+    CACHE = temp
 
 def QueryDatabase(query, values):
     result = []
