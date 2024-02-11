@@ -9,7 +9,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=["start"])
 def start_message(message):
-    bot.send_message(message.chat.id, MESSAGES["welcome"], parse_mode='html')
+    bot.send_message(message.chat.id, MESSAGES["welcome"], parse_mode='markdown')
 
 @bot.message_handler(commands=["user"])
 def echo_message(message):
@@ -26,6 +26,6 @@ def echo_message(message):
     #     print(message.entities[0])
     #     bot.send_message(message.chat.id, info)
     
-    else: bot.send_message(message.chat.id, messages["empty-request"])
+    else: bot.send_message(message.chat.id, messages["empty-request"], parse_mode='markdown')
 
 bot.polling()
