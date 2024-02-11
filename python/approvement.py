@@ -24,7 +24,7 @@ def PaymentApprovement(message):
         for _, value in USERS.items():
             if 'payment' in value:
                 list.append("*{user}*:\n/approve {chat_id}\n{info}".format_map(value['payment']))
-        result = "\n".join(list)
+        result = "\n\n".join(list)
         if result is None or len(result) < 1: result = MESSAGES_APV["empty-list"]
         BOT.send_message(message.chat.id, result, parse_mode='markdown')
         return
@@ -33,11 +33,11 @@ def PaymentApprovement(message):
         BOT.send_message(message.chat.id, MESSAGES_APV["invalid-chat-id"], parse_mode='markdown')
         return
     
-    ApprovePayment(request_text[0], message.chat.id)
+    ApprovePayment(request_text[0])
     
 @BOT.callback_query_handler(func=lambda call: call.data.startwith("approve"))
 def callback_query_handler(call):
-    ApprovePayment(call.data.split(".")[1], call.message.chat.id)
+    ApprovePayment(call.data.split(".")[1])
     return
 
 @BOT.message_handler(commands=["admin"])
@@ -51,9 +51,15 @@ def RegisterAdmin(message):
     VARIABLES.ADMIN = message.chat.id
     BOT.send_message(message.chat.id, MESSAGES_APV["set"], parse_mode='markdown')
 
-def ApprovePayment(user_id, chat_id):
+def ApprovePayment(user_id):
     user_id = int(user_id)
+
+    if user_id not in USERS or 'payment' not in USERS[user_id]:
+        BOT.send_message(VARIABLES.ADMIN, MESSAGES_APV["invalid-user"], parse_mode='markdown')
+        return
+
     payment = USERS[user_id].pop('payment')
     database.ExtendUser(payment['user'])
+
     BOT.send_message(user_id, MESSAGES_APV["approved"], parse_mode='markdown')
-    BOT.send_message(chat_id, MESSAGES_APV["approved"], parse_mode='markdown')
+    BOT.send_message(VARIABLES.ADMIN, MESSAGES_APV["approved"], parse_mode='markdown')
