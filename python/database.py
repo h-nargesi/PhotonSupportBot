@@ -1,6 +1,7 @@
 import threading
-import mysql.connector
+import mysql.connector as sql
 import datetime as dt
+import re
 import files
 
 class CacheItem:
@@ -19,11 +20,16 @@ def GetAllUserInfoByPhone(phone):
     query = QUERY_USER_INFO.replace("where", "where phone = %s")
     return ExecuteQuery(query, (phone))
 
+def GetUserInfo(username, secret):
+    isphone = re.search("^\+\d+$", secret)
+    if isphone: return GetUserInfoByPhone(username, secret)
+    else: return GetUserInfoByPassword(username, secret)
+
 def GetUserInfoByPhone(username, phone):
     query = QUERY_USER_INFO.replace("where", "where username = %s and phone = %s")
     return ExecuteQuery(query, (username, phone))
 
-def GetUSerInfoByPassword(username, password):
+def GetUserInfoByPassword(username, password):
     query = QUERY_USER_INFO.replace("where", "where username = %s and clear_password = %s")
     return ExecuteQuery(query, (username, password))
 
@@ -62,7 +68,7 @@ def QueryDatabase(query, values):
     result = []
 
     try:
-        cnx = mysql.connector.connect(**DATABASE)
+        cnx = sql.connect(**DATABASE)
         cursor = cnx.cursor()
         cursor.execute(query, values)
 
