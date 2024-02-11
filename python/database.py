@@ -1,12 +1,19 @@
+import threading
 import mysql.connector
 import datetime as dt
 import files
+
+class CacheItem:
+    def __init__(self, time, data):
+        self.Time = time
+        self.Data = data
 
 QUERY_USER_INFO = files.GetQueryUserInfo()
 CONFIGURATION = files.getConfiguration()
 MESSAGES = files.getMessages()
 DATABASE = files.getDatabaseInfo()
 CACHE = dict()
+LOCK = threading.Lock()
 
 def GetAllUserInfoByPhone(phone):
     query = QUERY_USER_INFO.replace("where", "where phone = %s")
@@ -22,17 +29,36 @@ def GetUSerInfoByPassword(username, password):
 
 def ExecuteQuery(query, values):
     key = " ".join(values)
-    
-    ClearCache()
+
+    with LOCK:
+        ClearCache()
     
     if key in CACHE:
-        return CACHE[key]['data']
+        return CACHE[key].Data
+    
+    current_item = CacheItem(
+        dt.datetime.now(), 
+        MESSAGES['please-wait'])
 
-    CACHE[key] = {
-        'time': dt.datetime.now(),
-        'data': MESSAGES['please-wait']
-    }
+    with LOCK:
+        CACHE[key] = current_item
 
+    current_item.Data = QueryDatabase(query, values)
+    current_item.Time = dt.datetime.now()
+
+    return current_item.Data
+
+def ClearCache():
+    temp = dict()
+    index_time = dt.datetime.now() - dt.timedelta(minutes=CONFIGURATION['cache-minutes'])
+
+    for key, value in CACHE.items():
+        if value.Time >= index_time:
+            temp[key] = value
+
+    return temp
+
+def QueryDatabase(query, values):
     result = []
 
     try:
@@ -59,20 +85,4 @@ def ExecuteQuery(query, values):
         if cursor is not None: cursor.close()
         if cnx is not None: cnx.close()
 
-    result = "\n".join(result)
-    CACHE[key] = {
-        'time': dt.datetime.now(),
-        'data': result
-    }
-
-    return result
-
-def ClearCache():
-    temp = dict()
-    index_time = dt.datetime.now() - dt.timedelta(minutes=CONFIGURATION['cache-minutes'])
-
-    for key, value in CACHE.items():
-        if value['time'] >= index_time:
-            temp[key] = value
-
-    return temp
+    return "\n".join(result)
