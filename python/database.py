@@ -39,12 +39,12 @@ def ExecuteQuery(query, values):
     with LOCK:
         ClearCache()
     
-    if key in CACHE:
+    if key in CACHE and CACHE[key].Data is not None and len(CACHE[key].Data) > 0:
         return CACHE[key].Data
     
     current_item = CacheItem(
         dt.datetime.now(), 
-        MESSAGES['please-wait'])
+        MESSAGES['user']['please-retry'])
 
     with LOCK:
         CACHE[key] = current_item
