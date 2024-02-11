@@ -1,0 +1,59 @@
+import database
+
+from globalvalues import TOKEN, BOT, MESSAGES, USERS, VARIABLES
+
+MESSAGES_APV = None
+CALLBACK = ["approve", "ignore"]
+
+def Init():
+    global MESSAGES_APV
+    MESSAGES_APV = MESSAGES["admin"]
+
+@BOT.message_handler(commands=["approve"])
+def PaymentApprovement(message):
+    if VARIABLES.ADMIN != message.chat.id:
+        BOT.send_message(message.chat.id, MESSAGES_APV["invalid-access"], parse_mode='markdown')
+        return
+
+    request_text = message.text.split(" ")[1:]
+
+    if len(request_text) < 1: return
+
+    if request_text[0] == 'list':
+        list = []
+        for _, value in USERS.items():
+            if 'payment' in value:
+                list.append("*{user}*:\n/approve {chat_id}\n{info}".format_map(value['payment']))
+        result = "\n".join(list)
+        if result is None or len(result) < 1: result = MESSAGES_APV["empty-list"]
+        BOT.send_message(message.chat.id, result, parse_mode='markdown')
+        return
+    
+    if not request_text[0].isnumeric():
+        BOT.send_message(message.chat.id, MESSAGES_APV["invalid-chat-id"], parse_mode='markdown')
+        return
+    
+    ApprovePayment(request_text[0], message.chat.id)
+    
+@BOT.callback_query_handler(func=lambda call: call.data.startwith("approve"))
+def callback_query_handler(call):
+    ApprovePayment(call.data.split(".")[1], call.message.chat.id)
+    return
+
+@BOT.message_handler(commands=["admin"])
+def RegisterAdmin(message):
+    request_text = message.text.split(" ")[1:]
+
+    if len(request_text) != 1 or request_text[0] != TOKEN.split(":")[1]:
+        BOT.send_message(message.chat.id, MESSAGES_APV["invalid-pass"], parse_mode='markdown')
+        return
+
+    VARIABLES.ADMIN = message.chat.id
+    BOT.send_message(message.chat.id, MESSAGES_APV["set"], parse_mode='markdown')
+
+def ApprovePayment(user_id, chat_id):
+    user_id = int(user_id)
+    payment = USERS[user_id].pop('payment')
+    database.ExtendUser(payment['user'])
+    BOT.send_message(user_id, MESSAGES_APV["approved"], parse_mode='markdown')
+    BOT.send_message(chat_id, MESSAGES_APV["approved"], parse_mode='markdown')

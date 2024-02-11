@@ -4,21 +4,21 @@ import datetime as dt
 import re
 import files
 
+from globalvalues import MESSAGES, CONFIGURATION
+
 class CacheItem:
     def __init__(self, time, data):
         self.Time = time
         self.Data = data
 
 QUERY_USER_INFO = files.GetQueryUserInfo()
-CONFIGURATION = files.getConfiguration()
-MESSAGES = files.getMessages()
 DATABASE = files.getDatabaseInfo()
 CACHE = dict()
 LOCK = threading.Lock()
 
 def GetAllUserInfoByPhone(phone):
     query = QUERY_USER_INFO.replace("where", "where phone = %s")
-    return ExecuteQuery(query, (phone))
+    return ReadQuery(query, (phone))
 
 def GetUserInfo(username, secret):
     isphone = re.search("^\+\d+$", secret)
@@ -27,13 +27,16 @@ def GetUserInfo(username, secret):
 
 def GetUserInfoByPhone(username, phone):
     query = QUERY_USER_INFO.replace("where", "where username = %s and phone = %s")
-    return ExecuteQuery(query, (username, phone))
+    return ReadQuery(query, (username, phone))
 
 def GetUserInfoByPassword(username, password):
     query = QUERY_USER_INFO.replace("where", "where username = %s and clear_password = %s")
-    return ExecuteQuery(query, (username, password))
+    return ReadQuery(query, (username, password))
 
-def ExecuteQuery(query, values):
+def ExtendUser(user):
+    return user
+
+def ReadQuery(query, values):
     key = " ".join(values)
 
     with LOCK:
@@ -89,6 +92,9 @@ def QueryDatabase(query, values):
             
             result.append("{}: {}".format(username, account_info))
 
+    except:
+        result = [ MESSAGES['error'] ]
+    
     finally:
         if cursor is not None: cursor.close()
         if cnx is not None: cnx.close()
