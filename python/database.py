@@ -2,10 +2,6 @@ import mysql.connector
 import datetime as dt
 import files
 
-class CacheItem:
-    Time = None
-    Data = None
-
 QUERY_USER_INFO = files.GetQueryUserInfo()
 CONFIGURATION = files.getConfiguration()
 MESSAGES = files.getMessages()
@@ -25,11 +21,12 @@ def GetUSerInfoByPassword(username, password):
     return ExecuteQuery(query, (username, password))
 
 def ExecuteQuery(query, values):
+    key = " ".join(values)
+    
     ClearCache()
     
-    key = " ".join(values)
     if key in CACHE:
-        return CACHE[key].data
+        return CACHE[key]['data']
 
     CACHE[key] = {
         'time': dt.datetime.now(),
@@ -47,14 +44,14 @@ def ExecuteQuery(query, values):
             account_info = ""
 
             if left_days is not None and left_days > 0:
-                account_info += " and {} days".format(left_days)
+                account_info += " and *{} days*".format(left_days)
             if left_hours is not None and (left_hours > 0 or left_days <= 0):
-                account_info += " and {} hours".format(left_hours)
+                account_info += " and *{} hours*".format(left_hours)
             if giga_left is not None:
-                account_info += " and {} GB".format(giga_left)
+                account_info += " and *{} GB*".format(giga_left)
 
-            if len(account_info) > 0: account_info = "*{}* remains".format(account_info[5:])
-            else: account_info = "no limit!"
+            if len(account_info) > 0: account_info = "{} remains".format(account_info[5:])
+            else: account_info = "*no limit!*"
             
             result.append("{}: {}".format(username, account_info))
 
@@ -71,11 +68,11 @@ def ExecuteQuery(query, values):
     return result
 
 def ClearCache():
-    cache = dict()
+    temp = dict()
     index_time = dt.datetime.now() - dt.timedelta(minutes=CONFIGURATION['cache-minutes'])
 
-    for key, value in CACHE:
-        if value.time >= index_time:
-            cache[key] = value
+    for key, value in CACHE.items():
+        if value['time'] >= index_time:
+            temp[key] = value
 
-    CACHE = cache
+    return temp
