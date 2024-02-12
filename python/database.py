@@ -93,7 +93,7 @@ def QueryDatabase(query, values):
             result.append("{}: {}".format(username, account_info))
 
     except:
-        result = [ MESSAGES['error'] ]
+        result = [ MESSAGES['reading-error'] ]
     
     finally:
         if cursor is not None: cursor.close()

@@ -12,7 +12,7 @@ def ExtendUser(message):
     request_text = message.text.split(" ")[1:]
 
     if VARIABLES.ADMIN < 0:
-        BOT.send_message(message.chat.id, MESSAGES_EXT["admin-not-set"], parse_mode='markdown')
+        BOT.send_message(message.chat.id, MESSAGES["global-error"], parse_mode='markdown')
         return
     
     if len(request_text) == 0:
