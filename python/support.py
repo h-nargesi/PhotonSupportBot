@@ -10,6 +10,6 @@ user.Init()
 
 @BOT.message_handler(commands=["start"])
 def start_message(message):
-    BOT.send_message(message.chat.id, MESSAGES["welcome"], parse_mode='markdown')
+    BOT.send_message(message.chat.id, "\n".join(MESSAGES["welcome"]), parse_mode='markdown')
 
 BOT.polling()
