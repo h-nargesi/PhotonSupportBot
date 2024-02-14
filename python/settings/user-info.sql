@@ -7,7 +7,7 @@ from (
 		, greatest(0, timestampdiff(hour, now(), expiration)) as time_left
 		, greatest(0, total_data - data_usage) as data_left
 	from ph_v_users_data_usage u
-	where
+	where (@where)
 	  and account_disabled = 0
 ) rep
 ;

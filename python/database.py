@@ -17,7 +17,7 @@ CACHE = dict()
 LOCK = threading.Lock()
 
 def GetAllUserInfoByPhone(phone):
-    query = QUERY_USER_INFO.replace("where", "where phone = %s")
+    query = QUERY_USER_INFO.replace("@where", "phone = %s")
     return ExecuteQuery(query, (phone))
 
 def GetUserInfo(username, secret):
@@ -26,11 +26,11 @@ def GetUserInfo(username, secret):
     else: return GetUserInfoByPassword(username, secret)
 
 def GetUserInfoByPhone(username, phone):
-    query = QUERY_USER_INFO.replace("where", "where username = %s and phone = %s")
+    query = QUERY_USER_INFO.replace("@where", "username = %s and phone = %s")
     return ExecuteQuery(query, (username, phone))
 
 def GetUserInfoByPassword(username, password):
-    query = QUERY_USER_INFO.replace("where", "where username = %s and clear_password = %s")
+    query = QUERY_USER_INFO.replace("@where", "username = %s and clear_password = %s")
     return ExecuteQuery(query, (username, password))
 
 def ExecuteQuery(query, values):
