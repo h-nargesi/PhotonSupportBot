@@ -9,26 +9,28 @@ def Init():
 
 @BOT.message_handler(commands=["extension"])
 def ExtendUser(message):
-    request_text = message.text.split(" ")[1:]
+    BOT.send_message(message.chat.id, MESSAGES["out-of-service"], parse_mode='markdown')
 
-    if VARIABLES.ADMIN < 0:
-        BOT.send_message(message.chat.id, MESSAGES["global-error"], parse_mode='markdown')
-        return
+    # request_text = message.text.split(" ")[1:]
+
+    # if VARIABLES.ADMIN < 0:
+    #     BOT.send_message(message.chat.id, MESSAGES["global-error"], parse_mode='markdown')
+    #     return
     
-    if len(request_text) == 0:
-        output = MESSAGES_EXT['get-user-name']
-        if message.chat.id in USERS and 'name' in USERS[message.chat.id]:
-            output += MESSAGES_EXT['default-user'].format(USERS[message.chat.id]['name'])
-        BOT.send_message(message.chat.id, output, parse_mode='markdown')
+    # if len(request_text) == 0:
+    #     output = MESSAGES_EXT['get-user-name']
+    #     if message.chat.id in USERS and 'name' in USERS[message.chat.id]:
+    #         output += MESSAGES_EXT['default-user'].format(USERS[message.chat.id]['name'])
+    #     BOT.send_message(message.chat.id, output, parse_mode='markdown')
         
-        BOT.register_next_step_handler(message, GetUsername)
+    #     BOT.register_next_step_handler(message, GetUsername)
 
-    elif len(request_text) == 1:
-        message.text = request_text[0]
-        GetUsername(message)
+    # elif len(request_text) == 1:
+    #     message.text = request_text[0]
+    #     GetUsername(message)
     
-    else:
-        BOT.send_message(message.chat.id, MESSAGES["invlid-request"], parse_mode='markdown')
+    # else:
+    #     BOT.send_message(message.chat.id, MESSAGES["invlid-request"], parse_mode='markdown')
 
 def GetUsername(message):
     username = message.text if message.text != '.' else USERS[message.chat.id]['name']
