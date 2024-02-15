@@ -36,7 +36,6 @@ def GetUserInfoByPassword(username, password):
 def ExtendUser(user):
     return user
 
-
 def ReadQuery(query, values):
     key = " ".join(values)
 
