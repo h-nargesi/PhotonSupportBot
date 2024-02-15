@@ -2,5 +2,6 @@ token.txt
 database.json
 
 *.zip
+*.log
 
 **/__pycache__/

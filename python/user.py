@@ -1,4 +1,5 @@
 import database
+import logging
 
 from globalvalues import BOT, MESSAGES, USERS, VARIABLES
 
@@ -10,8 +11,11 @@ def Init():
 
 @BOT.message_handler(commands=["user"])
 def GetUserInfo(message):
+    logging_info = { 'userid': message.chat.id }
     request_text = message.text.split(" ")[1:]
     messages = MESSAGES["user"]
+
+    logging.info('user command: (%s)', ')('.join(request_text), extra=logging_info)
 
     if len(request_text) == 2:
         info = database.GetUserInfo(request_text[0], request_text[1])

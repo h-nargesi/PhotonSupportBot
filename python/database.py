@@ -3,6 +3,7 @@ import mysql.connector as sql
 import datetime as dt
 import re
 import files
+import logging
 
 from globalvalues import MESSAGES, CONFIGURATION
 
@@ -96,8 +97,9 @@ def QueryDatabase(query, values):
             
             result.append("{}: {}".format(username, account_info))
 
-    except:
+    except Exception as ex:
         result = [ MESSAGES['reading-error'] ]
+        logging.error('database call (%s): %s', ')('.join(values), ex, extra={ 'userid': None })
     
     finally:
         if cursor is not None: cursor.close()

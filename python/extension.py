@@ -11,7 +11,10 @@ def Init():
 def ExtendUser(message):
     BOT.send_message(message.chat.id, MESSAGES["out-of-service"], parse_mode='markdown')
 
+    # logging_info = { 'userid': message.chat.id }
     # request_text = message.text.split(" ")[1:]
+    
+    # logging.info('extension command: (%s)', ')('.join(request_text), extra=logging_info)
 
     # if VARIABLES.ADMIN < 0:
     #     BOT.send_message(message.chat.id, MESSAGES["global-error"], parse_mode='markdown')
