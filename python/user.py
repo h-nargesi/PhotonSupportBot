@@ -23,13 +23,13 @@ def GetUserInfo(message):
     elif len(request_text) == 1:
         if message.chat.id == VARIABLES.ADMIN:
             info = database.GetUserInfoByAdmin(request_text[0])
-            BOT.send_message(message.chat.id, info)
+            BOT.send_message(message.chat.id, info, parse_mode='markdown')
 
         elif message.chat.id not in USERS:
             BOT.send_message(message.chat.id, messages["user-not-set"], parse_mode='markdown')
 
         else:
             info = database.GetUserInfo(USERS[message.chat.id]['name'], request_text[0])
-            BOT.send_message(message.chat.id, info)
+            BOT.send_message(message.chat.id, info, parse_mode='markdown')
     
     else: BOT.send_message(message.chat.id, messages["empty-request"], parse_mode='markdown')
