@@ -16,6 +16,10 @@ DATABASE = files.getDatabaseInfo()
 CACHE = dict()
 LOCK = threading.Lock()
 
+def GetUserInfoByAdmin(username):
+    query = QUERY_USER_INFO.replace("@where", "username = %s")
+    return ReadQuery(query, (username))
+
 def GetAllUserInfoByPhone(phone):
     query = QUERY_USER_INFO.replace("@where", "phone = %s")
     return ReadQuery(query, (phone))
