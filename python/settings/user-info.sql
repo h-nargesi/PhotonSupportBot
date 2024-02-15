@@ -6,8 +6,16 @@ from (
 	select *
 		, greatest(0, timestampdiff(hour, now(), expiration)) as time_left
 		, greatest(0, total_data - data_usage) as data_left
-	from ph_v_users_data_usage u
-	where (@where)
-	  and account_disabled = 0
+	from (
+		select u.username, u.expiration, u.total_data
+			, case when total_data is null then null else (
+				select sum(acctinputoctets) + sum(acctoutputoctets) as data_usage
+				from radacct d
+				where d.username = u.username
+			) end as data_usage
+        from ph_v_all_users u
+		where (@where)
+		  and account_disabled = 0        
+    ) u
 ) rep
 ;
