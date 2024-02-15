@@ -16,4 +16,9 @@ def start_message(message):
     logging.info('start command', extra={ 'userid': message.chat.id })
     BOT.send_message(message.chat.id, "\n".join(MESSAGES["welcome"]), parse_mode='markdown')
 
+@BOT.message_handler(commands=["bank"])
+def start_message(message):
+    logging.info('bank command', extra={ 'userid': message.chat.id })
+    BOT.send_message(message.chat.id, "\n".join(MESSAGES["bank-account"]), parse_mode='markdown')
+
 BOT.polling()

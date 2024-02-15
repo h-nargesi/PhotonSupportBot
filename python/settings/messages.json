@@ -8,6 +8,9 @@
     "بطور مثال:",
     "\t/user `username` `password`",
     "\t/user `username` `+98912XXXXXXX`",
+    "",
+    "*bank*:",
+    "برای نمایش شماره کارت بانکی",
     "..."
   ],
   "welcome-full": [
@@ -25,8 +28,12 @@
     "\t/extension",
     "\t`username`",
     "\t`payment info`",
+    "",
+    "*bank*:",
+    "برای نمایش شماره کارت بانکی",
     "..."
   ],
+  "bank-account": ["بانک رسالت", "5041-7212-1116-0461", "حامد نرگسی"],
   "please-wait": "لطفا صبر کنید!",
   "invlid-request": "درخواست غیر مجاز!",
   "reading-error": "خطا در خواندن اطلاعات!",
