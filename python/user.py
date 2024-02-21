@@ -27,6 +27,7 @@ def GetUserInfo(message):
     elif len(request_text) == 1:
         if message.chat.id == VARIABLES.ADMIN:
             info = database.GetUserInfoByAdmin(request_text[0])
+            if info is None or len(info) < 1: info = messages["empty-result"]
             BOT.send_message(message.chat.id, info, parse_mode='markdown')
 
         elif message.chat.id not in USERS:
