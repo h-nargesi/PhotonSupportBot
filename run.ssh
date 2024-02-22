@@ -1,1 +1,2 @@
-python3 ./python/support.py 2>> ./python/logs/error.log &
+cd python
+python3 ./support.py 2>> ./logs/error.log &
