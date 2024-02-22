@@ -38,3 +38,9 @@ def GetUserInfo(message):
             BOT.send_message(message.chat.id, info, parse_mode='markdown')
     
     else: BOT.send_message(message.chat.id, messages["empty-request"], parse_mode='markdown')
+
+def GetUsername(message):
+    return
+
+def GetAuthentication(message):
+    return
