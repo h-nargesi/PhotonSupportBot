@@ -1,7 +1,6 @@
 import threading
 import mysql.connector as sql
 import datetime as dt
-import re
 import files
 import logging
 
@@ -18,24 +17,19 @@ CACHE = dict()
 LOCK = threading.Lock()
 
 def GetUserInfoByAdmin(username):
-    query = QUERY_USER_INFO.replace("@where", "username = %s")
+    query = QUERY_USER_INFO.replace("@where", "username like %s")
     return ReadQuery(query, (username, ))
 
 def GetAllUserInfoByPhone(phone):
     query = QUERY_USER_INFO.replace("@where", "phone = %s")
     return ReadQuery(query, (phone, ))
 
-def GetUserInfo(username, secret):
-    isphone = re.search("^\+\d+$", secret)
-    if isphone: return GetUserInfoByPhone(username, secret)
-    else: return GetUserInfoByPassword(username, secret)
-
 def GetUserInfoByPhone(username, phone):
-    query = QUERY_USER_INFO.replace("@where", "username = %s and phone = %s")
+    query = QUERY_USER_INFO.replace("@where", "username like %s and phone like %s")
     return ReadQuery(query, (username, phone))
 
 def GetUserInfoByPassword(username, password):
-    query = QUERY_USER_INFO.replace("@where", "username = %s and clear_password = %s")
+    query = QUERY_USER_INFO.replace("@where", "username like %s and clear_password = %s")
     return ReadQuery(query, (username, password))
 
 def ExtendUser(user):
@@ -82,20 +76,8 @@ def QueryDatabase(query, values):
         cursor = cnx.cursor()
         cursor.execute(query, values)
 
-        for (username, left_days, left_hours, giga_left) in cursor:
-            account_info = ""
-
-            if left_days is not None and left_days > 0:
-                account_info += " and *{} days*".format(left_days)
-            if left_hours is not None and (left_hours > 0 or left_days <= 0):
-                account_info += " and *{} hours*".format(left_hours)
-            if giga_left is not None:
-                account_info += " and *{} GB*".format(giga_left)
-
-            if len(account_info) > 0: account_info = "{} remains".format(account_info[5:])
-            else: account_info = "*no limit!*"
-            
-            result.append("{}: {}".format(username, account_info))
+        for row in cursor:
+            result.append(row)
 
     except Exception as ex:
         result = [ MESSAGES['reading-error'] ]
@@ -104,5 +86,5 @@ def QueryDatabase(query, values):
     finally:
         if cursor is not None: cursor.close()
         if cnx is not None: cnx.close()
-
-    return "\n".join(result)
+    
+    return result
