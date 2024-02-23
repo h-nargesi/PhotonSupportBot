@@ -21,4 +21,4 @@ def start_message(message):
     logging.info('bank command', extra={ 'userid': message.chat.id })
     BOT.send_message(message.chat.id, "\n".join(MESSAGES["price"]), parse_mode='markdown')
 
-BOT.polling()
+BOT.infinity_polling(timeout=10, long_polling_timeout = 5)
