@@ -54,3 +54,6 @@ def InitQueryInfo(chat_id):
         USERS[chat_id]['user-info'] = dict()
     
     USERS[chat_id]['user-info']['tries'] = 0
+
+def GetLogInfo(chat_id):
+    return { 'userid': chat_id, 'username': SafeGet(chat_id, ['name']) }

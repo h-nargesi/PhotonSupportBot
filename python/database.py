@@ -81,7 +81,7 @@ def QueryDatabase(query, values):
 
     except Exception as ex:
         result = [ MESSAGES['reading-error'] ]
-        logging.error('database call (%s): %s', ')('.join(values), ex, extra={ 'userid': None })
+        logging.error('database call (%s): %s', ')('.join(values), ex, extra={ 'userid': None, 'username': None })
     
     finally:
         if cursor is not None: cursor.close()

@@ -45,5 +45,5 @@ def InitLogging():
     path = os.path.realpath(os.path.join(directory, '{:%Y-%m-%d}.log'.format(datetime.datetime.now())))
 
     file_handler = logging.FileHandler(path)
-    format = '%(asctime)s | %(levelname)-8s | %(userid)-10s | %(message)s'
-    logging.basicConfig(encoding='utf-8', format=format, handlers=[file_handler])
+    format = '%(asctime)s | %(levelname)-8s | %(userid)-10s | %(username)s | %(message)s'
+    logging.basicConfig(encoding='utf-8', format=format, handlers=[file_handler], level=logging.INFO)

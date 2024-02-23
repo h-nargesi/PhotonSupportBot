@@ -13,10 +13,7 @@ def Init():
 
 @BOT.message_handler(commands=["user"])
 def GetUserInfo(message):
-    logging_info = { 'userid': message.chat.id }
     request_text = message.text.split(" ")[1:]
-
-    logging.info('user command: (%s)', ')('.join(request_text), extra=logging_info)
 
     username = secret = None
     gv.InitQueryInfo(message.chat.id)
@@ -58,6 +55,10 @@ def UserInfoSteps(message, username, secret):
         else: info = database.GetUserInfoByPassword(username, secret)
 
     result = MakeResult(message.chat.id, info)
+
+    logging_info = gv.GetLogInfo(message.chat.id)
+    logging.info('user command: (%s, %s)', username, secret, extra=logging_info)
+
     BOT.send_message(message.chat.id, result, parse_mode='markdown')
 
 def GetUsername(message):
@@ -100,7 +101,7 @@ def MakeResult(chat_id, info):
     if info is None or len(info) == 0:
         return MESSAGES_USR["empty-result"]
     elif len(info) == 1 and chat_id != VARIABLES.ADMIN:
-        gv.AddUser(chat_id, info[0])
+        gv.AddUser(chat_id, info[0][0])
 
     for (username, left_days, left_hours, giga_left) in info:
         account_info = ""

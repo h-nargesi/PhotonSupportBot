@@ -1,5 +1,6 @@
 import database
 import logging
+import globalvalues as gv
 
 from globalvalues import TOKEN, BOT, MESSAGES, USERS, VARIABLES
 
@@ -12,7 +13,7 @@ def Init():
 
 @BOT.message_handler(commands=["approve"])
 def PaymentApprovement(message):
-    logging_info = { 'userid': message.chat.id }
+    logging_info = gv.GetLogInfo(message.chat.id)
 
     if VARIABLES.ADMIN != message.chat.id:
         logging.warning('approve command: invalid-access for (%s)', ')('.join(request_text), extra=logging_info)
