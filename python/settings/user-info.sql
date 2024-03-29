@@ -5,7 +5,7 @@ select username
 from (
 	select *
 		, greatest(0, timestampdiff(hour, now(), expiration)) as time_left
-		, greatest(0, total_data - data_usage) as data_left
+		, greatest(0, total_data - ifnull(data_usage, 0)) as data_left
 	from (
 		select u.username, u.expiration, u.total_data
 			, case when total_data is null then null else (
