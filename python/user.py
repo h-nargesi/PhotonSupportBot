@@ -13,19 +13,23 @@ def Init():
 
 @BOT.message_handler(commands=["user"])
 def GetUserInfo(message):
-    request_text = message.text.split(" ")[1:]
+    try:
+        request_text = message.text.split(" ")[1:]
 
-    username = secret = None
-    gv.InitQueryInfo(message.chat.id)
+        username = secret = None
+        gv.InitQueryInfo(message.chat.id)
 
-    if len(request_text) > 0:
-        username = request_text[0]
-        username = CheckUserName(message, username)
+        if len(request_text) > 0:
+            username = request_text[0]
+            username = CheckUserName(message, username)
 
-    if len(request_text) > 1:
-        secret = request_text[1]
+        if len(request_text) > 1:
+            secret = request_text[1]
 
-    UserInfoSteps(message, username, secret)
+        UserInfoSteps(message, username, secret)
+
+    except Exception as ex:
+        logging.error('user command: %s', ex, extra=gv.GetLogInfo(message.chat.id))
 
 def UserInfoSteps(message, username, secret):
     tries = gv.SafeGet(message.chat.id, ['user-info', 'tries'])
@@ -116,6 +120,6 @@ def MakeResult(chat_id, info):
         if len(account_info) > 0: account_info = "{} remains".format(account_info[5:])
         else: account_info = "*no limit!*"
         
-        result.append("{}: {}".format(username, account_info))
+        result.append("{}: {}".format(username.replace('_', '\\_'), account_info))
 
     return "\n".join(result)

@@ -60,7 +60,7 @@ def ClearCache():
     global CACHE
 
     temp = dict()
-    index_time = dt.datetime.now() - dt.timedelta(minutes=CONFIGURATION['cache-minutes'])
+    index_time = dt.datetime.now() - dt.timedelta(seconds=CONFIGURATION['cache-seconds'])
 
     for key, value in CACHE.items():
         if value.Time >= index_time:

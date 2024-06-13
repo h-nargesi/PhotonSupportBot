@@ -56,4 +56,5 @@ def InitQueryInfo(chat_id):
     USERS[chat_id]['user-info']['tries'] = 0
 
 def GetLogInfo(chat_id):
-    return { 'userid': chat_id, 'username': SafeGet(chat_id, ['name']) }
+    username = 'ADMIN' if chat_id == VARIABLES.ADMIN else SafeGet(chat_id, ['name'])
+    return { 'userid': chat_id, 'username': username }

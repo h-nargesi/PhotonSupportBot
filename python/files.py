@@ -10,7 +10,10 @@ DATABASE = "database.json"
 QUERY_USER_INFO = "user-info.sql"
 
 def GetToken():
-    return GetTextFile(TOKEN)
+    token = GetTextFile(TOKEN)
+    token = token.replace('\r', '')
+    token = token.replace('\n', '')
+    return token
 
 def getMessages():
     return GetJsonFile(MESSAGES)
