@@ -3,6 +3,7 @@ import extension
 import approvement
 import files
 import logging
+import notification
 import globalvalues as gv
 
 from globalvalues import BOT, MESSAGES
@@ -23,3 +24,5 @@ def start_message(message):
     BOT.send_message(message.chat.id, "\n".join(MESSAGES["price"]), parse_mode='markdown')
 
 BOT.infinity_polling(timeout=10, long_polling_timeout = 5)
+
+notification.StartService()

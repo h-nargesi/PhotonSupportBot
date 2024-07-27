@@ -8,8 +8,8 @@ from (
 		, total_data - ifnull(data_usage, 0) as data_left
 	from (
 		select u.username, u.expiration
-			, case when u.reset_type_data is null then null else u.total_data end as total_data
-			, case when total_data is null then null else (
+			, case when u.reset_type_data is null then null else ifnull(u.total_data, 0) end as total_data
+			, case when u.reset_type_data is null then null else (
 				select sum(acctinputoctets) + sum(acctoutputoctets) as data_usage
 				from radacct d
 				where d.username = u.username

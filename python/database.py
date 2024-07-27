@@ -16,6 +16,14 @@ DATABASE = files.getDatabaseInfo()
 CACHE = dict()
 LOCK = threading.Lock()
 
+def GetAllMonthlyUserInfo():
+    query = QUERY_USER_INFO.replace("@where", "u.expiration is not null")
+    return ReadQuery(query, None)
+
+def GetAllTrafficUserInfo():
+    query = QUERY_USER_INFO.replace("@where", " u.reset_type_data is not null")
+    return ReadQuery(query, None)
+
 def GetUserInfoByAdmin(username):
     query = QUERY_USER_INFO.replace("@where", "username like %s")
     return ReadQuery(query, (username, ))
