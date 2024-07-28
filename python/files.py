@@ -8,6 +8,7 @@ MESSAGES = "messages.json"
 CONFIGURATION = "configuration.json"
 DATABASE = "database.json"
 QUERY_USER_INFO = "user-info.sql"
+QUERY_TOPUP_INFO = "topup-info.sql"
 
 def GetToken():
     token = GetTextFile(TOKEN)
@@ -26,6 +27,9 @@ def getDatabaseInfo():
 
 def GetQueryUserInfo():
     return GetTextFile(QUERY_USER_INFO)
+
+def GetQueryTopupInfo():
+    return GetTextFile(QUERY_TOPUP_INFO)
 
 def GetTextFile(file_name):
     file_name = GetFilePath(file_name)
