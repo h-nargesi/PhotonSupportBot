@@ -7,6 +7,7 @@ from (
 	select *
 		, greatest(0, timestampdiff(hour, now(), expiration)) as time_left
 		, total_data_limit - ifnull(data_usage, 0) as data_left
+		, total_data_limit - ifnull(data_usage, 0) as data_left
 	from (
 		select u.username, u.expiration
 			, case when u.reset_type_data is null then null else ifnull(u.total_data_limit, 0) end as total_data_limit
