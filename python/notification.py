@@ -25,12 +25,11 @@ def TrafficNextNotif():
 # CHECK USERS
 
 def CheckMonthlyUsers():
-    user_info = database.GetAllMonthlyUserInfo()
+    user_info = database.GetAllMonthlyUserInfo(-3)
     if user_info is None or len(user_info) == 0: return
     
     result = {}
     for user in user_info:
-        if user[3] > 48: continue
         result[user[0]] = user
 
     return result
@@ -56,6 +55,8 @@ def CheckTrafficUsers():
 
 def MonthleyUsers():
     while True:
+        notif = CheckMonthlyUsers()
+
         time.sleep(MonthlyNextNotif())
 
 def TrafficUsers():
