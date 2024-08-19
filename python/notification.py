@@ -2,10 +2,11 @@ import time
 import datetime
 import threading
 import database
+import user
 import logging
 import globalvalues as gv
 
-from globalvalues import BOT, MESSAGES
+from globalvalues import BOT, MESSAGES, VARIABLES
 
 MESSAGES_NOTIF = None
 
@@ -81,4 +82,8 @@ def SendWarningMessage(notif, message):
 
         if chat_id < 0: continue
 
-        # BOT.send_message(chat_id, message.format_map(userinfo), parse_mode='markdown')
+        remain = user.MakeResult(chat_id, [userinfo])
+        # BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
+
+        if VARIABLES.ADMIN > 0:
+            BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')

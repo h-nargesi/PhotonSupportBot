@@ -84,7 +84,7 @@
     "request-btn": "تایید"
   },
   "expiring-warning": {
-    "time-warning": "",
-    "traffic-warning": ""
+    "time-warning": "از زمان اکانت شما کمتر از ۲ روز مانده.\n{}",
+    "traffic-warning": "از ترافیک اکانت شما کمتر از ۱۰ درصد مانده.\n{}"
   }
 }
