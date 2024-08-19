@@ -8,6 +8,7 @@ TOKEN = files.GetToken()
 BOT = telebot.TeleBot(TOKEN)
 MESSAGES = files.getMessages()
 USERS = dict()
+USERS_BY_NAME = dict()
 VARIABLES = GlobalVariables()
 CONFIGURATION = files.getConfiguration()
 
@@ -39,6 +40,19 @@ def __SafeGet(cache, keys):
     cache = cache[key]
     if len(keys) < 1: return cache
     else: return __SafeGet(cache, keys)
+
+def GetUserByName(username):
+    chat_id = USERS_BY_NAME[username] if username in USERS_BY_NAME else -1
+
+    if chat_id not in USERS or USERS[chat_id]['name'] != username:
+        chat_id = -1
+        for id in USERS:
+            if USERS[id]['name'] == username:
+                USERS_BY_NAME[username] = id
+                chat_id = id
+                break
+
+    return chat_id
 
 def AddUser(chat_id, username):
     if chat_id not in USERS:

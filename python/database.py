@@ -21,24 +21,21 @@ LOCK = threading.Lock()
 CATEGORY_USER_INFO_QUERY = 'USER'
 CATEGORY_TOPUP_INFO_QUERY = 'TOPUP'
 
-def Test():
-    topup_query = Query('topup', QUERY_TOPUP_INFO).Select("1")
-    topup_query.OuterWhere("data > 0")
-    topup_query.OuterWhere("topup.username = us.username")
-    topup_query.OuterWhere("to_gigabyte(data, 2) * 0.1 >= us.data_left")
-
-    uq = Query('us', QUERY_USER_INFO).InnerWhere("u.reset_type_data is not null")
-    uq.OuterWhere(topup_query)
-
-    print(uq.ToQueryString())
-
 def GetAllMonthlyUserInfo(days):
     query = QUERY_USER_INFO.replace("@where", "u.expiration between date_add(now(), interval %s day) and now()")
     return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (days))
 
-def GetAllTrafficUserInfo():
-    query = QUERY_USER_INFO.replace("@where", "u.reset_type_data is not null")
-    return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, None)
+def GetAllTrafficUserInfo(percent):
+    topup_query = Query('topup', QUERY_TOPUP_INFO).Select("1")
+    topup_query.OuterWhere("data > 0")
+    topup_query.OuterWhere("topup.username = us.username")
+    topup_query.OuterWhere("us.giga_left > 0")
+    topup_query.OuterWhere("us.giga_left <= to_gigabyte(data, 2) * %s")
+
+    uq = Query('us', QUERY_USER_INFO).InnerWhere("u.reset_type_data is not null")
+    uq.OuterWhere(topup_query)
+
+    return ReadQuerySingleCache(uq.ToQueryString(), CATEGORY_USER_INFO_QUERY, (percent))
 
 def GetUserInfoByAdmin(username):
     query = QUERY_USER_INFO.replace("@where", "username like %s")
@@ -55,11 +52,6 @@ def GetUserInfoByPhone(username, phone):
 def GetUserInfoByPassword(username, password):
     query = QUERY_USER_INFO.replace("@where", "username like %s and clear_password = %s")
     return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (username, password))
-
-def GetTopUps(usernames):
-    query = "', '".join(usernames)
-    query = QUERY_TOPUP_INFO.replace("@where", f"u.username in ('{query}')")
-    return QueryDatabase(query, None)
 
 def ExtendUser(user):
     return user

@@ -2,6 +2,16 @@ import time
 import datetime
 import threading
 import database
+import logging
+import globalvalues as gv
+
+from globalvalues import BOT, MESSAGES
+
+MESSAGES_NOTIF = None
+
+def Init():
+    global MESSAGES_NOTIF
+    MESSAGES_NOTIF = MESSAGES["expiring-warning"]
 
 def StartService():
     threading.Thread(target = MonthleyUsers).start()
@@ -35,18 +45,11 @@ def CheckMonthlyUsers():
     return result
 
 def CheckTrafficUsers():
-    user_info = database.GetAllTrafficUserInfo()
+    user_info = database.GetAllTrafficUserInfo(0.1)
     if user_info is None or len(user_info) == 0: return
 
-    usernames = [info[0] for info in user_info]
-    topups = dict()
-    for record in database.GetTopUps(usernames):
-        topups[record[0]] = record
-    
     result = {}
     for user in user_info:
-        min = topups[record[0]][1] if record[0] in topups else 1
-        if user[2] > min: continue
         result[user[0]] = user
 
     return result
@@ -56,9 +59,26 @@ def CheckTrafficUsers():
 def MonthleyUsers():
     while True:
         notif = CheckMonthlyUsers()
+        SendWarningMessage(notif, MESSAGES_NOTIF['time-warning'])
 
         time.sleep(MonthlyNextNotif())
 
 def TrafficUsers():
     while True:
+        notif = CheckTrafficUsers()
+        SendWarningMessage(notif, MESSAGES_NOTIF['traffic-warning'])
+
         time.sleep(TrafficNextNotif())
+
+def SendWarningMessage(notif, message):
+    if notif is None or len(notif) < 1: return
+
+    for userinfo in notif:
+        chat_id = gv.GetUserByName(userinfo['username'])
+
+        logging_info = gv.GetLogInfo(chat_id)
+        logging.info('expiring warning: (%s, chat: %s)', userinfo['username'], chat_id, extra=logging_info)
+
+        if chat_id < 0: continue
+
+        # BOT.send_message(chat_id, message.format_map(userinfo), parse_mode='markdown')

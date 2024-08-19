@@ -25,7 +25,10 @@ class Query:
     def GetWhereClause(where):
         result = []
         for w in where:
-            if w is Query: result.append(f"exists (\n{w.ToQueryString()})")
+            if type(w) is Query:
+                sub = w.ToQueryString()
+                if sub.endswith(';'): sub = sub[:-1]
+                result.append(f"exists (\n{sub})")
             else: result.append(f"({w})")
         
         return "\n  and ".join(result)
@@ -39,12 +42,14 @@ class Query:
                 if "@where" not in self.query: raise Exception("The query does not contain inner where clause.")
                 self.query = self.query.replace("@where", Query.GetWhereClause(self.condition))
         elif self.query is not Query:
-            self.query = self.query.replace("where @where", "")
+            self.query = self.query.replace("where (@where)", "")
         
         if self.columns is None and self.where is None: return self.query
 
-        result = self.query.ToQueryString() if self.query is Query else self.query
-        result = f"({result}) {self.name}"
+        result = self.query.ToQueryString() if self.query is Query else self.query.strip()
+        if result.endswith(';'): result = result[:-1]
+
+        result = f"from (\n{result}) {self.name}"
 
         if self.columns is None: result = "select *\n" + result
         else: 
@@ -54,4 +59,4 @@ class Query:
         if self.where is not None:
             result += f"\nwhere {Query.GetWhereClause(self.where)}"
 
-        return result
+        return result + '\n;'

@@ -82,5 +82,9 @@
     "get-payment-pic": "چهار رقم آخر شماره کارت خود و زمان واریزی را ارسال کنید:",
     "wait-for-approvement": "در انتظار تایید پرداخت بمانید.",
     "request-btn": "تایید"
+  },
+  "expiring-warning": {
+    "time-warning": "",
+    "traffic-warning": ""
   }
 }
