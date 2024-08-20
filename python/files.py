@@ -7,7 +7,9 @@ TOKEN = "token.txt"
 MESSAGES = "messages.json"
 CONFIGURATION = "configuration.json"
 DATABASE = "database.json"
+MIKROTIKS = "mikrotiks.json"
 QUERY_USER_INFO = "user-info.sql"
+QUERY_VALID_USER_LIST = "valid-user-list.sql"
 
 def GetToken():
     token = GetTextFile(TOKEN)
@@ -24,8 +26,14 @@ def getConfiguration():
 def getDatabaseInfo():
     return GetJsonFile(DATABASE)
 
+def getMikrotikServers():
+    return GetJsonFile(MIKROTIKS)
+
 def GetQueryUserInfo():
     return GetTextFile(QUERY_USER_INFO)
+
+def GetQueryValidUserList():
+    return GetTextFile(QUERY_VALID_USER_LIST)
 
 def GetTextFile(file_name):
     file_name = GetFilePath(file_name)

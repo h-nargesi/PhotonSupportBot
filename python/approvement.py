@@ -2,7 +2,7 @@ import database
 import logging
 import globalvalues as gv
 
-from globalvalues import TOKEN, BOT, MESSAGES, USERS, VARIABLES
+from globalvalues import BOT, MESSAGES, USERS, VARIABLES
 
 MESSAGES_APV = None
 CALLBACK = ["approve", "ignore"]
@@ -45,17 +45,6 @@ def PaymentApprovement(message):
 def callback_query_handler(call):
     ApprovePayment(call.data.split(".")[1])
     return
-
-@BOT.message_handler(commands=["admin"])
-def RegisterAdmin(message):
-    request_text = message.text.split(" ")[1:]
-
-    if len(request_text) != 1 or request_text[0] != TOKEN.split(":")[1]:
-        BOT.send_message(message.chat.id, MESSAGES_APV["invalid-pass"], parse_mode='markdown')
-        return
-
-    VARIABLES.ADMIN = message.chat.id
-    BOT.send_message(message.chat.id, MESSAGES_APV["set"], parse_mode='markdown')
 
 def ApprovePayment(user_id):
     user_id = int(user_id)

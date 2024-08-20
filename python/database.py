@@ -12,6 +12,7 @@ class CacheItem:
         self.Data = data
 
 QUERY_USER_INFO = files.GetQueryUserInfo()
+QUERY_VALID_USER_LIST = files.GetQueryValidUserList()
 DATABASE = files.getDatabaseInfo()
 CACHE = dict()
 LOCK = threading.Lock()
@@ -31,6 +32,9 @@ def GetUserInfoByPhone(username, phone):
 def GetUserInfoByPassword(username, password):
     query = QUERY_USER_INFO.replace("@where", "username like %s and clear_password = %s")
     return ReadQuery(query, (username, password))
+
+def GetQueryValidUserList():
+    return ReadQuery(QUERY_VALID_USER_LIST, None)
 
 def ExtendUser(user):
     return user
