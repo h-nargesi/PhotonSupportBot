@@ -57,7 +57,7 @@ def RegisterAdmin(message):
         return
 
     VARIABLES.ADMIN = message.chat.id
-    log.critical('[admin]: has been set', **logging_info)
+    log.info('[admin]: has been set', **logging_info)
     BOT.send_message(message.chat.id, MESSAGES_APV["set"], parse_mode='markdown')
 
 def ApprovePayment(user_id):
