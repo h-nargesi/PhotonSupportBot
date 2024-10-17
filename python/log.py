@@ -1,9 +1,10 @@
 import logging
 import datetime
+import files
 import os
 
 def Init():
-    directory = os.path.realpath(os.path.join(os.getcwd(), "logs"))
+    directory = files.GetFilePath("logs")
     if not os.path.exists(directory): os.makedirs(directory)
     path = os.path.realpath(os.path.join(directory, '{:%Y-%m-%d}.log'.format(datetime.datetime.now())))
 
