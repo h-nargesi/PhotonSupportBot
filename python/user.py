@@ -30,7 +30,7 @@ def GetUserInfo(message):
         UserInfoSteps(message, username, secret)
 
     except Exception:
-        log.error('[user]: %s', traceback.format_exc(), extra=gv.GetLogInfo(message.chat.id))
+        log.error('[user]: %s', traceback.format_exc(), **gv.GetLogInfo(message.chat.id))
 
 def UserInfoSteps(message, username, secret):
     tries = gv.SafeGet(message.chat.id, ['user-info', 'tries'])
@@ -61,8 +61,7 @@ def UserInfoSteps(message, username, secret):
 
     result = MakeResult(message.chat.id, info)
 
-    logging_info = gv.GetLogInfo(message.chat.id)
-    log.info('[user]: (%s, %s)', username, secret, extra=logging_info)
+    log.info('[user]: (%s, %s)', username, secret, **gv.GetLogInfo(message.chat.id))
 
     BOT.send_message(message.chat.id, result, parse_mode='markdown')
 

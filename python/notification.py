@@ -3,7 +3,7 @@ import datetime
 import threading
 import database
 import user
-import logging
+import log
 import globalvalues as gv
 
 from globalvalues import BOT, MESSAGES, VARIABLES
@@ -75,15 +75,14 @@ def SendWarningMessage(notif, message):
     if notif is None or len(notif) < 1: return
 
     for userinfo in notif:
-        chat_id = gv.GetUserByName(userinfo['username'])
+        chat_id = gv.GetUserByName(userinfo[0])
 
-        logging_info = gv.GetLogInfo(chat_id)
-        logging.info('expiring warning: (%s, chat: %s)', userinfo['username'], chat_id, extra=logging_info)
+        log.info('expiring warning: (%s, chat: %s)', userinfo[0], chat_id, **gv.GetLogInfo(chat_id))
 
         remain = user.MakeResult(chat_id, [userinfo])
 
-        if chat_id > 0:
-            BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
+        # if chat_id > 0:
+        #     BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
 
         if VARIABLES.ADMIN > 0:
             BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')

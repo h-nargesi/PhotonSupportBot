@@ -2,7 +2,6 @@ select username
 	, floor(time_left / 24) as left_days
 	, mod(time_left, 24) as left_hours
 	, to_gigabyte(data_left, 2) as giga_left
-	, time_left as total_hour_left
 from (
 	select *
 		, greatest(0, timestampdiff(hour, now(), expiration)) as time_left
