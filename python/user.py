@@ -1,5 +1,5 @@
 import database
-import logging
+import log
 import re
 import globalvalues as gv
 
@@ -29,7 +29,7 @@ def GetUserInfo(message):
         UserInfoSteps(message, username, secret)
 
     except Exception as ex:
-        logging.error('user command: %s', ex, extra=gv.GetLogInfo(message.chat.id))
+        log.error('[user]: %s', ex, extra=gv.GetLogInfo(message.chat.id))
 
 def UserInfoSteps(message, username, secret):
     tries = gv.SafeGet(message.chat.id, ['user-info', 'tries'])
@@ -61,7 +61,7 @@ def UserInfoSteps(message, username, secret):
     result = MakeResult(message.chat.id, info)
 
     logging_info = gv.GetLogInfo(message.chat.id)
-    logging.info('user command: (%s, %s)', username, secret, extra=logging_info)
+    log.info('[user]: (%s, %s)', username, secret, extra=logging_info)
 
     BOT.send_message(message.chat.id, result, parse_mode='markdown')
 
@@ -70,7 +70,7 @@ def GetUsername(message):
     UserInfoSteps(message, username, None)
 
 def CheckUserName(message, username):
-    if re.search("^\d+$", username):
+    if re.search("^\\d+$", username):
         while len(username) < 4: username = "0" + username
         username = "_" + username + "%"
     
@@ -87,7 +87,7 @@ def GetSecret(message):
     UserInfoSteps(message, user_info_query, message.text)
 
 def CheckSecret(secret):
-    isphone = re.search("^\+?\d+$", secret)
+    isphone = re.search("^\\+?\\d+$", secret)
 
     if isphone:
         if len(secret) < 5:

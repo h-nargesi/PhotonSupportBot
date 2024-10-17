@@ -1,5 +1,5 @@
 import database
-import logging
+import log
 import globalvalues as gv
 
 from globalvalues import TOKEN, BOT, MESSAGES, USERS, VARIABLES
@@ -16,12 +16,12 @@ def PaymentApprovement(message):
     logging_info = gv.GetLogInfo(message.chat.id)
 
     if VARIABLES.ADMIN != message.chat.id:
-        logging.warning('approve command: invalid-access for (%s)', ')('.join(request_text), extra=logging_info)
+        log.warning('[approve]: invalid-access for (%s)', ')('.join(request_text), extra=logging_info)
         BOT.send_message(message.chat.id, MESSAGES_APV["invalid-access"], parse_mode='markdown')
         return
 
     request_text = message.text.split(" ")[1:]
-    logging.info('approve command: (%s)', ')('.join(request_text), extra=logging_info)
+    log.info('[approve]: (%s)', ')('.join(request_text), extra=logging_info)
 
     if len(request_text) < 1: return
 
