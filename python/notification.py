@@ -80,10 +80,10 @@ def SendWarningMessage(notif, message):
         logging_info = gv.GetLogInfo(chat_id)
         logging.info('expiring warning: (%s, chat: %s)', userinfo['username'], chat_id, extra=logging_info)
 
-        if chat_id < 0: continue
-
         remain = user.MakeResult(chat_id, [userinfo])
-        # BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
+
+        if chat_id > 0:
+            BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
 
         if VARIABLES.ADMIN > 0:
             BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
