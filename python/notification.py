@@ -60,6 +60,7 @@ def CheckTrafficUsers():
 def MonthleyUsers():
     while True:
         notif = CheckMonthlyUsers()
+        log.info('monthly user checked: expiring count = %s', len(notif))
         SendWarningMessage(notif, MESSAGES_NOTIF['time-warning'])
 
         time.sleep(MonthlyNextNotif())
@@ -67,6 +68,7 @@ def MonthleyUsers():
 def TrafficUsers():
     while True:
         notif = CheckTrafficUsers()
+        log.info('traffic user checked: expiring count = %s', len(notif))
         SendWarningMessage(notif, MESSAGES_NOTIF['traffic-warning'])
 
         time.sleep(TrafficNextNotif())
