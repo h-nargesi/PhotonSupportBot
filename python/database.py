@@ -2,7 +2,7 @@ import threading
 import mysql.connector as sql
 import datetime as dt
 import files
-import logging
+import log
 
 from globalvalues import MESSAGES, CONFIGURATION
 
@@ -81,7 +81,7 @@ def QueryDatabase(query, values):
 
     except Exception as ex:
         result = [ MESSAGES['reading-error'] ]
-        logging.error('database call (%s): %s', ')('.join(values), ex, extra={ 'userid': None, 'username': None })
+        log.error('database call (%s): %s', ')('.join(values), ex)
     
     finally:
         if cursor is not None: cursor.close()

@@ -1,7 +1,5 @@
 import json
 import os
-import logging
-import datetime
 import shutil
 
 TOKEN = "token.txt"
@@ -45,15 +43,6 @@ def GetJsonFile(file_name):
 def GetFilePath(file_name):
     return os.path.realpath(os.path.join(os.getcwd(), "settings", file_name))
 
-def InitLogging():
-    directory = os.path.realpath(os.path.join(os.getcwd(), "logs"))
-    if not os.path.exists(directory): os.makedirs(directory)
-    path = os.path.realpath(os.path.join(directory, '{:%Y-%m-%d}.log'.format(datetime.datetime.now())))
-
-    file_handler = logging.FileHandler(path)
-    format = '%(asctime)s | %(levelname)-8s | %(userid)-10s | %(username)s | %(message)s'
-    logging.basicConfig(encoding='utf-8', format=format, handlers=[file_handler], level=logging.INFO)
-
 def copyFromTemp(file_name):
     if file_name is None: return
 
@@ -64,7 +53,5 @@ def copyFromTemp(file_name):
     file_path = GetFilePath(file_name)
     temp_path = GetFilePath(temp_name)
 
-    print('temp_name:', file_path)
-    print('temp_name:', temp_path)
     if not os.path.exists(file_path) and os.path.exists(temp_path):
         shutil.copyfile(temp_path, file_path)
