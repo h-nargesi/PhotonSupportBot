@@ -1,5 +1,7 @@
 token.txt
+messages.json
 database.json
+configuration.json
 
 *.zip
 *.log
