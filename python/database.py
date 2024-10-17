@@ -1,4 +1,5 @@
 import threading
+import traceback
 import mysql.connector as sql
 import datetime as dt
 import files
@@ -137,9 +138,9 @@ def QueryDatabase(query, values):
         for row in cursor:
             result.append(row)
 
-    except Exception as ex:
+    except Exception:
         result = [ MESSAGES['reading-error'] ]
-        log.error('database call (%s): %s', ')('.join(values), ex)
+        log.error('database call (%s): %s', ')('.join(values), traceback.format_exc())
     
     finally:
         if cursor is not None: cursor.close()

@@ -1,6 +1,7 @@
 import database
 import log
 import re
+import traceback
 import globalvalues as gv
 
 from globalvalues import BOT, MESSAGES, VARIABLES
@@ -28,8 +29,8 @@ def GetUserInfo(message):
 
         UserInfoSteps(message, username, secret)
 
-    except Exception as ex:
-        log.error('[user]: %s', ex, extra=gv.GetLogInfo(message.chat.id))
+    except Exception:
+        log.error('[user]: %s', traceback.format_exc(), extra=gv.GetLogInfo(message.chat.id))
 
 def UserInfoSteps(message, username, secret):
     tries = gv.SafeGet(message.chat.id, ['user-info', 'tries'])
