@@ -29,19 +29,22 @@ def GetQueryUserInfo():
     return GetTextFile(QUERY_USER_INFO)
 
 def GetTextFile(file_name):
-    file_name = GetFilePath(file_name)
+    file_name = GetFilePathSettings(file_name)
     with open(file_name, "r", encoding="utf-8") as content_file:
         content = content_file.read()
     return content
 
 def GetJsonFile(file_name):
-    file_name = GetFilePath(file_name)
+    file_name = GetFilePathSettings(file_name)
     with open(file_name, "r", encoding="utf-8") as content_file:
         content = json.load(content_file)
     return content
 
-def GetFilePath(file_name):
-    return os.path.realpath(os.path.join(os.getcwd(), "settings", file_name))
+def GetFilePathSettings(file_name):
+    return GetFilePath('settings', file_name)
+
+def GetFilePath(*path):
+    return os.path.realpath(os.path.join(os.path.dirname(__file__), *path))
 
 def copyFromTemp(file_name):
     if file_name is None: return
@@ -50,8 +53,8 @@ def copyFromTemp(file_name):
     parts[0] += "-template"
     temp_name = ".".join(parts)
     
-    file_path = GetFilePath(file_name)
-    temp_path = GetFilePath(temp_name)
+    file_path = GetFilePathSettings(file_name)
+    temp_path = GetFilePathSettings(temp_name)
 
     if not os.path.exists(file_path) and os.path.exists(temp_path):
         shutil.copyfile(temp_path, file_path)
