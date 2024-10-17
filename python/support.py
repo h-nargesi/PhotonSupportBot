@@ -12,6 +12,7 @@ files.InitLogging()
 user.Init()
 extension.Init()
 approvement.Init()
+notification.Init()
 
 @BOT.message_handler(commands=["start"])
 def start_message(message):

@@ -23,7 +23,7 @@ CATEGORY_TOPUP_INFO_QUERY = 'TOPUP'
 
 def GetAllMonthlyUserInfo(days):
     query = QUERY_USER_INFO.replace("@where", "u.expiration between date_add(now(), interval %s day) and now()")
-    return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (days))
+    return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (days, ))
 
 def GetAllTrafficUserInfo(percent):
     topup_query = Query('topup', QUERY_TOPUP_INFO).Select("1")
@@ -35,7 +35,7 @@ def GetAllTrafficUserInfo(percent):
     uq = Query('us', QUERY_USER_INFO).InnerWhere("u.reset_type_data is not null")
     uq.OuterWhere(topup_query)
 
-    return ReadQuerySingleCache(uq.ToQueryString(), CATEGORY_USER_INFO_QUERY, (percent))
+    return ReadQuerySingleCache(uq.ToQueryString(), CATEGORY_USER_INFO_QUERY, (percent, ))
 
 def GetUserInfoByAdmin(username):
     query = QUERY_USER_INFO.replace("@where", "username like %s")
@@ -62,7 +62,8 @@ def ReadQuerySingleCache(query, category, values):
     with LOCK:
         ClearCache()
     
-    key = f'{category}|{" ".join(values) if values is not None else "None"}'
+    str_values = [str(v) for v in values] if values is not None else ["None"]
+    key = f'{category}|{" ".join(str_values)}'
 
     if key in CACHE and CACHE[key].Data is not None and len(CACHE[key].Data) > 0:
         return CACHE[key].Data

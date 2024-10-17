@@ -2,7 +2,7 @@ import telebot
 import files
 
 class GlobalVariables:
-    ADMIN = -1
+    ADMIN = -2
 
 TOKEN = files.GetToken()
 BOT = telebot.TeleBot(TOKEN)

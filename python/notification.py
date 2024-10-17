@@ -22,21 +22,21 @@ def StartService():
 # NEXT TIME
 
 def MonthlyNextNotif():
-    now = datetime.now()
+    now = datetime.datetime.now()
     # considering UTC time (Asia/Tehran=7:30)
     seconds_of_day = (now.replace(hour=3, minute=30, second=0, microsecond=0) - now).total_seconds()
     if seconds_of_day >= 0: return seconds_of_day
     else: return 86400 + seconds_of_day
 
 def TrafficNextNotif():
-    now = datetime.now()
+    now = datetime.datetime.now()
     seconds_of_day = (now - now.replace(hour=0, minute=30, second=0, microsecond=0)).total_seconds()
     return 360 - seconds_of_day % 360
 
 # CHECK USERS
 
 def CheckMonthlyUsers():
-    user_info = database.GetAllMonthlyUserInfo(-3)
+    user_info = database.GetAllMonthlyUserInfo(-10)
     if user_info is None or len(user_info) == 0: return
     
     result = {}

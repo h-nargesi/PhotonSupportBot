@@ -33,13 +33,13 @@ def GetQueryTopupInfo():
 
 def GetTextFile(file_name):
     file_name = GetFilePath(file_name)
-    with open(file_name, "r") as content_file:
+    with open(file_name, "r", encoding="utf8") as content_file:
         content = content_file.read()
     return content
 
 def GetJsonFile(file_name):
     file_name = GetFilePath(file_name)
-    with open(file_name, "r") as content_file:
+    with open(file_name, "r", encoding="utf8") as content_file:
         content = json.load(content_file)
     return content
 
