@@ -68,7 +68,5 @@ def copyFromTemp(file_name):
     file_path = GetFilePath(file_name)
     temp_path = GetFilePath(temp_name)
 
-    print('temp_name:', file_path)
-    print('temp_name:', temp_path)
     if not os.path.exists(file_path) and os.path.exists(temp_path):
         shutil.copyfile(temp_path, file_path)
