@@ -30,7 +30,7 @@ def GetAllTrafficUserInfo(percent):
     topup_query.OuterWhere("data > 0")
     topup_query.OuterWhere("topup.username = us.username")
     topup_query.OuterWhere("us.giga_left > 0")
-    topup_query.OuterWhere("us.giga_left <= to_gigabyte(data, 2) * %s")
+    topup_query.OuterWhere("us.giga_left <= topup.data * 0.1 * %s")
 
     uq = Query('us', QUERY_USER_INFO).InnerWhere("u.reset_type_data is not null")
     uq.OuterWhere(topup_query)
