@@ -76,7 +76,7 @@ def ReadQuerySingleCache(query, category, values):
     with LOCK:
         CACHE[key] = current_item
 
-    current_item.Data = QueryDatabase(query, values)
+    current_item.Data = queryDatabase(query, values)
     current_item.Time = dt.datetime.now()
 
     return current_item.Data
@@ -127,7 +127,7 @@ def ClearCache():
 
     CACHE = temp
 
-def QueryDatabase(query, values):
+def queryDatabase(query, values):
     result = []
 
     try:

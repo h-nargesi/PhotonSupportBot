@@ -26,16 +26,16 @@ def ExtendUser(message):
     #         output += MESSAGES_EXT['default-user'].format(USERS[message.chat.id]['name'])
     #     BOT.send_message(message.chat.id, output, parse_mode='markdown')
         
-    #     BOT.register_next_step_handler(message, GetUsername)
+    #     BOT.register_next_step_handler(message, getUsername)
 
     # elif len(request_text) == 1:
     #     message.text = request_text[0]
-    #     GetUsername(message)
+    #     getUsername(message)
     
     # else:
     #     BOT.send_message(message.chat.id, MESSAGES["invlid-request"], parse_mode='markdown')
 
-def GetUsername(message):
+def getUsername(message):
     username = message.text if message.text != '.' else USERS[message.chat.id]['name']
     
     if message.chat.id in USERS:
@@ -44,9 +44,9 @@ def GetUsername(message):
         USERS[message.chat.id] = { 'payment': { 'user': username } }
 
     BOT.send_message(message.chat.id, MESSAGES_EXT["get-payment-pic"], parse_mode='markdown')
-    BOT.register_next_step_handler(message, GetPaymentInfo)
+    BOT.register_next_step_handler(message, getPaymentInfo)
 
-def GetPaymentInfo(message):
+def getPaymentInfo(message):
     payment = USERS[message.chat.id]['payment']
     payment['info'] = message.text
     payment['chat_id'] = message.chat.id
