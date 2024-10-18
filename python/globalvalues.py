@@ -6,11 +6,11 @@ class GlobalVariables:
 
 TOKEN = files.GetToken()
 BOT = telebot.TeleBot(TOKEN)
-MESSAGES = files.getMessages()
+MESSAGES = files.GetMessages()
 USERS = dict()
 USERS_BY_NAME = dict()
 VARIABLES = GlobalVariables()
-CONFIGURATION = files.getConfiguration()
+CONFIGURATION = files.GetConfiguration()
 
 # USER
 # {
@@ -23,6 +23,8 @@ CONFIGURATION = files.getConfiguration()
 #     user-info: {
 #         query: string,
 #         tries: int,
+#         alert-admin: datetime,
+#         alert-user: datetime,
 #     }
 # }
 
@@ -30,7 +32,7 @@ def SafeGet(chat_id, *keys):
     if chat_id not in USERS or len(keys) == 0:
         return None
 
-    return safeGet(USERS[chat_id], keys)
+    return safeGet(USERS[chat_id], list(keys))
 
 def safeGet(cache, keys):
 
@@ -49,33 +51,49 @@ def GetUserByName(username):
         for id in USERS:
             if USERS[id]['name'] == username:
                 USERS_BY_NAME[username] = id
+                files.SaveData('users-by-name', USERS_BY_NAME)
                 chat_id = id
                 break
 
-    return chat_id
+    return int(chat_id)
 
-def AddUser(chat_id, username):
+def AddUser(chat_id, username, save=True):
+    if chat_id < 0: return 
+
     if chat_id not in USERS:
-        USERS[chat_id] = dict()
+        USERS[chat_id] = { 'name': username }
     
-    if username is not None:
+    elif username is not None:
         USERS[chat_id]['name'] = username
 
+    if save: files.SaveData('users', USERS)
+
 def InitPayment(chat_id, username):
-    AddUser(chat_id, None)
+    AddUser(chat_id, None, False)
 
     if 'payment' not in USERS[chat_id]:
         USERS[chat_id]['payment'] = dict()
 
     USERS[chat_id]['payment']['username'] = username
+    files.SaveData('users', USERS)
     
 def InitQueryInfo(chat_id):
-    AddUser(chat_id, None)
+    AddUser(chat_id, None, False)
 
     if 'user-info' not in USERS[chat_id]:
         USERS[chat_id]['user-info'] = dict()
     
     USERS[chat_id]['user-info']['tries'] = 0
+    files.SaveData('users', USERS)
+
+def AlertSent(chat_id, time, type):
+    AddUser(chat_id, None, False)
+
+    if 'user-info' not in USERS[chat_id]:
+        USERS[chat_id]['user-info'] = dict()
+    
+    USERS[chat_id]['user-info']['alert-' + type] = time
+    files.SaveData('users', USERS)
 
 def GetLogInfo(chat_id):
     username = 'ADMIN' if chat_id == VARIABLES.ADMIN else SafeGet(chat_id, 'name')

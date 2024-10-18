@@ -18,7 +18,9 @@ def GetUserInfo(message):
         request_text = message.text.split(" ")[1:]
 
         username = secret = None
-        gv.InitQueryInfo(message.chat.id)
+        
+        if message.chat.id != VARIABLES.ADMIN:
+            gv.InitQueryInfo(message.chat.id)
 
         if len(request_text) > 0:
             username = request_text[0]
@@ -59,6 +61,9 @@ def userInfoSteps(message, username, secret):
         if isphone: info = database.GetUserInfoByPhone(username, secret)
         else: info = database.GetUserInfoByPassword(username, secret)
 
+    if len(info) == 1 and message.chat.id != VARIABLES.ADMIN:
+        gv.AddUser(message.chat.id, info[0][0])
+    
     result = MakeResult(message.chat.id, info)
 
     log.info('[user]: (%s, %s)', username, secret, **gv.GetLogInfo(message.chat.id))
@@ -104,8 +109,6 @@ def MakeResult(chat_id, info):
 
     if info is None or len(info) == 0:
         return MESSAGES_USR["empty-result"]
-    elif len(info) == 1 and chat_id != VARIABLES.ADMIN:
-        gv.AddUser(chat_id, info[0][0])
 
     for (username, left_days, left_hours, giga_left) in info:
         account_info = ""

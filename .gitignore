@@ -6,4 +6,6 @@ configuration.json
 *.zip
 *.log
 
+*/data/*.json
+
 **/__pycache__/

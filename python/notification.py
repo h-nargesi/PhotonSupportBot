@@ -31,7 +31,7 @@ def MonthlyNextNotif():
 def TrafficNextNotif():
     now = datetime.datetime.now()
     seconds_of_day = (now - now.replace(hour=0, minute=30, second=0, microsecond=0)).total_seconds()
-    return 60 - seconds_of_day % 60
+    return 1200 - seconds_of_day % 1200
 
 # CHECK USERS
 
@@ -80,12 +80,15 @@ def SendWarningMessage(notif, message):
         userinfo = notif[username]
         chat_id = gv.GetUserByName(username)
 
-        log.info('expiring warning: (%s, chat: %s) %s', username, chat_id, userinfo, **gv.GetLogInfo(chat_id))
+        log.info('expiring warning: (%s, chat: %s) %s', username, chat_id, userinfo)
 
         remain = user.MakeResult(chat_id, [userinfo])
 
-        # if chat_id > 0:
-        #     BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
+        if chat_id > 0:
+            BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
+            gv.AlertSent(VARIABLES.ADMIN, datetime.datetime.now(), 'user')
 
         if VARIABLES.ADMIN > 0:
             BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
+            if chat_id > 0:
+                gv.AlertSent(VARIABLES.ADMIN, datetime.datetime.now(), 'admin')

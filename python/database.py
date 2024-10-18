@@ -15,7 +15,7 @@ class CacheItem:
 
 QUERY_USER_INFO = files.GetQueryUserInfo()
 QUERY_TOPUP_INFO = files.GetQueryTopupInfo()
-DATABASE = files.getDatabaseInfo()
+DATABASE = files.GetDatabaseInfo()
 CACHE = dict()
 LOCK = threading.Lock()
 
