@@ -31,13 +31,13 @@ def MonthlyNextNotif():
 def TrafficNextNotif():
     now = datetime.datetime.now()
     seconds_of_day = (now - now.replace(hour=0, minute=30, second=0, microsecond=0)).total_seconds()
-    return 360 - seconds_of_day % 360
+    return 60 - seconds_of_day % 60
 
 # CHECK USERS
 
 def CheckMonthlyUsers():
     user_info = database.GetAllMonthlyUserInfo(-10)
-    if user_info is None or len(user_info) == 0: return
+    if user_info is None or len(user_info) == 0: return {}
     
     result = {}
     for user in user_info:
@@ -47,7 +47,7 @@ def CheckMonthlyUsers():
 
 def CheckTrafficUsers():
     user_info = database.GetAllTrafficUserInfo(0.1)
-    if user_info is None or len(user_info) == 0: return
+    if user_info is None or len(user_info) == 0: return {}
 
     result = {}
     for user in user_info:
@@ -76,10 +76,11 @@ def TrafficUsers():
 def SendWarningMessage(notif, message):
     if notif is None or len(notif) < 1: return
 
-    for userinfo in notif:
-        chat_id = gv.GetUserByName(userinfo[0])
+    for username in notif:
+        userinfo = notif[username]
+        chat_id = gv.GetUserByName(username)
 
-        log.info('expiring warning: (%s, chat: %s)', userinfo[0], chat_id, **gv.GetLogInfo(chat_id))
+        log.info('expiring warning: (%s, chat: %s) %s', username, chat_id, userinfo, **gv.GetLogInfo(chat_id))
 
         remain = user.MakeResult(chat_id, [userinfo])
 
