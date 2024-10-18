@@ -29,16 +29,16 @@ def SafeGet(chat_id, keys):
     if chat_id not in USERS or len(keys) == 0:
         return None
 
-    return __SafeGet(USERS[chat_id], keys)
+    return safeGet(USERS[chat_id], keys)
 
-def __SafeGet(cache, keys):
+def safeGet(cache, keys):
 
     key = keys.pop(0)
     if key not in cache: return None
 
     cache = cache[key]
     if len(keys) < 1: return cache
-    else: return __SafeGet(cache, keys)
+    else: return safeGet(cache, keys)
 
 def AddUser(chat_id, username):
     if chat_id not in USERS:

@@ -21,17 +21,17 @@ def GetUserInfo(message):
 
         if len(request_text) > 0:
             username = request_text[0]
-            username = CheckUserName(message, username)
+            username = checkUserName(message, username)
 
         if len(request_text) > 1:
             secret = request_text[1]
 
-        UserInfoSteps(message, username, secret)
+        userInfoSteps(message, username, secret)
 
     except Exception as ex:
         log.error('[user]: %s', ex, extra=gv.GetLogInfo(message.chat.id))
 
-def UserInfoSteps(message, username, secret):
+def userInfoSteps(message, username, secret):
     tries = gv.SafeGet(message.chat.id, ['user-info', 'tries'])
     if tries is not None and tries > 3:
         BOT.send_message(message.chat.id, MESSAGES_USR['exit'], parse_mode='markdown')
@@ -42,7 +42,7 @@ def UserInfoSteps(message, username, secret):
 
     if username is None:
         BOT.send_message(message.chat.id, MESSAGES_USR['get-user-name'], parse_mode='markdown')
-        BOT.register_next_step_handler(message, GetUsername)
+        BOT.register_next_step_handler(message, getUsername)
         return
 
     elif message.chat.id == VARIABLES.ADMIN:
@@ -50,11 +50,11 @@ def UserInfoSteps(message, username, secret):
 
     elif secret is None:
         BOT.send_message(message.chat.id, MESSAGES_USR["get-auth"], parse_mode='markdown')
-        BOT.register_next_step_handler(message, GetSecret)
+        BOT.register_next_step_handler(message, getSecret)
         return
 
     else:
-        isphone, secret = CheckSecret(secret)
+        isphone, secret = checkSecret(secret)
         if isphone: info = database.GetUserInfoByPhone(username, secret)
         else: info = database.GetUserInfoByPassword(username, secret)
 
@@ -65,11 +65,11 @@ def UserInfoSteps(message, username, secret):
 
     BOT.send_message(message.chat.id, result, parse_mode='markdown')
 
-def GetUsername(message):
-    username = CheckUserName(message, message.text)
-    UserInfoSteps(message, username, None)
+def getUsername(message):
+    username = checkUserName(message, message.text)
+    userInfoSteps(message, username, None)
 
-def CheckUserName(message, username):
+def checkUserName(message, username):
     if re.search("^\\d+$", username):
         while len(username) < 4: username = "0" + username
         username = "_" + username + "%"
@@ -82,11 +82,11 @@ def CheckUserName(message, username):
 
     return username
 
-def GetSecret(message):
+def getSecret(message):
     user_info_query = gv.SafeGet(message.chat.id, ['user-info', 'query'])
-    UserInfoSteps(message, user_info_query, message.text)
+    userInfoSteps(message, user_info_query, message.text)
 
-def CheckSecret(secret):
+def checkSecret(secret):
     isphone = re.search("^\\+?\\d+$", secret)
 
     if isphone:

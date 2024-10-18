@@ -39,11 +39,11 @@ def PaymentApprovement(message):
         BOT.send_message(message.chat.id, MESSAGES_APV["invalid-chat-id"], parse_mode='markdown')
         return
     
-    ApprovePayment(request_text[0])
+    approvePayment(request_text[0])
     
 @BOT.callback_query_handler(func=lambda call: call.data.startwith("approve"))
-def callback_query_handler(call):
-    ApprovePayment(call.data.split(".")[1])
+def callbackQueryHandler(call):
+    approvePayment(call.data.split(".")[1])
     return
 
 @BOT.message_handler(commands=["admin"])
@@ -60,7 +60,7 @@ def RegisterAdmin(message):
     log.critical('[admin]: has been set', **logging_info)
     BOT.send_message(message.chat.id, MESSAGES_APV["set"], parse_mode='markdown')
 
-def ApprovePayment(user_id):
+def approvePayment(user_id):
     user_id = int(user_id)
 
     if user_id not in USERS or 'payment' not in USERS[user_id]:

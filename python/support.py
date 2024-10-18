@@ -12,12 +12,12 @@ extension.Init()
 approvement.Init()
 
 @BOT.message_handler(commands=["start"])
-def start_message(message):
+def StartMessage(message):
     log.info('[start]', extra=gv.GetLogInfo(message.chat.id))
     BOT.send_message(message.chat.id, "\n".join(MESSAGES["welcome"]), parse_mode='markdown')
 
 @BOT.message_handler(commands=["price"])
-def start_message(message):
+def PrintPrice(message):
     log.info('[price]', extra=gv.GetLogInfo(message.chat.id))
     BOT.send_message(message.chat.id, "\n".join(MESSAGES["price"]), parse_mode='markdown')
 

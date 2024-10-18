@@ -18,28 +18,28 @@ LOCK = threading.Lock()
 
 def GetUserInfoByAdmin(username):
     query = QUERY_USER_INFO.replace("@where", "username like %s")
-    return ReadQuery(query, (username, ))
+    return readQuery(query, (username, ))
 
 def GetAllUserInfoByPhone(phone):
     query = QUERY_USER_INFO.replace("@where", "phone = %s")
-    return ReadQuery(query, (phone, ))
+    return readQuery(query, (phone, ))
 
 def GetUserInfoByPhone(username, phone):
     query = QUERY_USER_INFO.replace("@where", "username like %s and phone like %s")
-    return ReadQuery(query, (username, phone))
+    return readQuery(query, (username, phone))
 
 def GetUserInfoByPassword(username, password):
     query = QUERY_USER_INFO.replace("@where", "username like %s and clear_password = %s")
-    return ReadQuery(query, (username, password))
+    return readQuery(query, (username, password))
 
 def ExtendUser(user):
     return user
 
-def ReadQuery(query, values):
+def readQuery(query, values):
     key = " ".join(values)
 
     with LOCK:
-        ClearCache()
+        clearCache()
     
     if key in CACHE and CACHE[key].Data is not None and len(CACHE[key].Data) > 0:
         return CACHE[key].Data
@@ -51,12 +51,12 @@ def ReadQuery(query, values):
     with LOCK:
         CACHE[key] = current_item
 
-    current_item.Data = QueryDatabase(query, values)
+    current_item.Data = queryDatabase(query, values)
     current_item.Time = dt.datetime.now()
 
     return current_item.Data
 
-def ClearCache():
+def clearCache():
     global CACHE
 
     temp = dict()
@@ -68,7 +68,7 @@ def ClearCache():
 
     CACHE = temp
 
-def QueryDatabase(query, values):
+def queryDatabase(query, values):
     result = []
 
     try:
