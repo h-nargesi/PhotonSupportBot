@@ -1,5 +1,6 @@
+import globalvalues as gv
 from telebot import types
-from globalvalues import BOT, MESSAGES, USERS, VARIABLES
+from globalvalues import BOT, MESSAGES, VARIABLES
 
 MESSAGES_EXT = None
 
@@ -36,18 +37,14 @@ def ExtendUser(message):
     #     BOT.send_message(message.chat.id, MESSAGES["invlid-request"], parse_mode='markdown')
 
 def getUsername(message):
-    username = message.text if message.text != '.' else USERS[message.chat.id]['name']
-    
-    if message.chat.id in USERS:
-        USERS[message.chat.id]['payment'] = { 'user': username }
-    else:
-        USERS[message.chat.id] = { 'payment': { 'user': username } }
+    username = message.text if message.text != '.' else gv.SafeGet(message.chat.id, 'name')
+    gv.InitPayment(message.chat.id, username)
 
     BOT.send_message(message.chat.id, MESSAGES_EXT["get-payment-pic"], parse_mode='markdown')
     BOT.register_next_step_handler(message, getPaymentInfo)
 
 def getPaymentInfo(message):
-    payment = USERS[message.chat.id]['payment']
+    payment = gv.SafeGet(message.chat.id, 'payment')
     payment['info'] = message.text
     payment['chat_id'] = message.chat.id
     BOT.send_message(message.chat.id, MESSAGES_EXT["wait-for-approvement"], parse_mode='markdown')

@@ -27,7 +27,7 @@ def PaymentApprovement(message):
 
     if request_text[0] == 'list':
         list = []
-        for _, value in USERS.items():
+        for value in USERS.values():
             if 'payment' in value:
                 list.append("*{user}*:\n/approve {chat_id}\n{info}".format_map(value['payment']))
         result = "\n\n".join(list)

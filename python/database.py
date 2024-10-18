@@ -24,7 +24,7 @@ CATEGORY_TOPUP_INFO_QUERY = 'TOPUP'
 
 def GetAllMonthlyUserInfo(days):
     query = QUERY_USER_INFO.replace("@where", "u.expiration between date_add(now(), interval %s day) and now()")
-    return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (days, ))
+    return readQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (days, ))
 
 def GetAllTrafficUserInfo(percent):
     topup_query = Query('topup', QUERY_TOPUP_INFO).Select("1")
@@ -36,32 +36,32 @@ def GetAllTrafficUserInfo(percent):
     uq = Query('us', QUERY_USER_INFO).InnerWhere("u.reset_type_data is not null")
     uq.OuterWhere(topup_query)
 
-    return ReadQuerySingleCache(uq.ToQueryString(), CATEGORY_USER_INFO_QUERY, (percent, ))
+    return readQuerySingleCache(uq.ToQueryString(), CATEGORY_USER_INFO_QUERY, (percent, ))
 
 def GetUserInfoByAdmin(username):
     query = QUERY_USER_INFO.replace("@where", "username like %s")
-    return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (username, ))
+    return readQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (username, ))
 
 def GetAllUserInfoByPhone(phone):
     query = QUERY_USER_INFO.replace("@where", "phone = %s")
-    return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (phone, ))
+    return readQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (phone, ))
 
 def GetUserInfoByPhone(username, phone):
     query = QUERY_USER_INFO.replace("@where", "username like %s and phone like %s")
-    return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (username, phone))
+    return readQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (username, phone))
 
 def GetUserInfoByPassword(username, password):
     query = QUERY_USER_INFO.replace("@where", "username like %s and clear_password = %s")
-    return ReadQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (username, password))
+    return readQuerySingleCache(query, CATEGORY_USER_INFO_QUERY, (username, password))
 
 def ExtendUser(user):
     return user
 
-def ReadQuerySingleCache(query, category, values):
-    if category is None: return QueryDatabase(query, values)
+def readQuerySingleCache(query, category, values):
+    if category is None: return queryDatabase(query, values)
 
     with LOCK:
-        ClearCache()
+        clearCache()
     
     str_values = [str(v) for v in values] if values is not None else ["None"]
     key = f'{category}|{" ".join(str_values)}'
@@ -115,7 +115,7 @@ def ReadQuerySingleCache(query, category, values):
 
 #     return current_item.Data
 
-def ClearCache():
+def clearCache():
     global CACHE
 
     temp = dict()

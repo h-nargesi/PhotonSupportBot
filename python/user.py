@@ -33,12 +33,12 @@ def GetUserInfo(message):
         log.error('[user]: %s', traceback.format_exc(), **gv.GetLogInfo(message.chat.id))
 
 def userInfoSteps(message, username, secret):
-    tries = gv.SafeGet(message.chat.id, ['user-info', 'tries'])
+    tries = gv.SafeGet(message.chat.id, 'user-info', 'tries')
     if tries is not None and tries > 3:
         BOT.send_message(message.chat.id, MESSAGES_USR['exit'], parse_mode='markdown')
         return
     else:
-        user_info = gv.SafeGet(message.chat.id, ['user-info'])
+        user_info = gv.SafeGet(message.chat.id, 'user-info')
         user_info['tries'] = tries + 1 if tries is not None else 0
 
     if username is None:
@@ -74,7 +74,7 @@ def checkUserName(message, username):
         while len(username) < 4: username = "0" + username
         username = "_" + username + "%"
     
-    user_info_query = gv.SafeGet(message.chat.id, ['user-info'])
+    user_info_query = gv.SafeGet(message.chat.id, 'user-info')
     user_info_query['query'] = username
 
     if username is None:
@@ -83,7 +83,7 @@ def checkUserName(message, username):
     return username
 
 def getSecret(message):
-    user_info_query = gv.SafeGet(message.chat.id, ['user-info', 'query'])
+    user_info_query = gv.SafeGet(message.chat.id, 'user-info', 'query')
     userInfoSteps(message, user_info_query, message.text)
 
 def checkSecret(secret):

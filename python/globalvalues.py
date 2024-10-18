@@ -26,7 +26,7 @@ CONFIGURATION = files.getConfiguration()
 #     }
 # }
 
-def SafeGet(chat_id, keys):
+def SafeGet(chat_id, *keys):
     if chat_id not in USERS or len(keys) == 0:
         return None
 
@@ -38,7 +38,7 @@ def safeGet(cache, keys):
     if key not in cache: return None
 
     cache = cache[key]
-    if len(keys) < 1: return cache
+    if cache is None or len(keys) < 1: return cache
     else: return safeGet(cache, keys)
 
 def GetUserByName(username):
@@ -61,6 +61,14 @@ def AddUser(chat_id, username):
     if username is not None:
         USERS[chat_id]['name'] = username
 
+def InitPayment(chat_id, username):
+    AddUser(chat_id, None)
+
+    if 'payment' not in USERS[chat_id]:
+        USERS[chat_id]['payment'] = dict()
+
+    USERS[chat_id]['payment']['username'] = username
+    
 def InitQueryInfo(chat_id):
     AddUser(chat_id, None)
 
@@ -70,5 +78,5 @@ def InitQueryInfo(chat_id):
     USERS[chat_id]['user-info']['tries'] = 0
 
 def GetLogInfo(chat_id):
-    username = 'ADMIN' if chat_id == VARIABLES.ADMIN else SafeGet(chat_id, ['name'])
+    username = 'ADMIN' if chat_id == VARIABLES.ADMIN else SafeGet(chat_id, 'name')
     return { 'userid': chat_id, 'username': username }
