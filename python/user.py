@@ -61,7 +61,7 @@ def userInfoSteps(message, username, secret):
         else: info = database.GetUserInfoByPassword(username, secret)
 
     if len(info) == 1 and message.chat.id != VARIABLES.ADMIN:
-        USERS.set(info[0][0], message.chat.id)
+        USERS.set(info[0]['username'], message.chat.id)
 
     result = MakeResult(info)
 
@@ -109,7 +109,8 @@ def MakeResult(info):
     if info is None or len(info) == 0:
         return MESSAGES_USR["empty-result"]
 
-    for (username, left_days, left_hours, giga_left) in info:
+    for record in info:
+        (username, left_days, left_hours, giga_left) = record.values()
         account_info = ""
 
         if left_days is not None and left_days > 0:

@@ -40,7 +40,7 @@ def CheckMonthlyUsers():
 
     result = {}
     for user in user_info:
-        result[user[0]] = user
+        result[user['username']] = user
 
     return result
 
@@ -50,7 +50,7 @@ def CheckTrafficUsers():
 
     result = {}
     for user in user_info:
-        result[user[0]] = user
+        result[user['username']] = user
 
     return result
 

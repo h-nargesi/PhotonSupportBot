@@ -136,8 +136,13 @@ def queryDatabase(query, values):
         cursor.execute(query, values)
 
         for row in cursor:
-            result.append(row)
-
+            i = 0
+            object = dict()
+            for col in cursor.column_names:
+                object[col] = row[i]
+                i += 1
+            result.append(object)
+        
     except Exception:
         result = [ MESSAGES['reading-error'] ]
         log.error('database call (%s): %s', ')('.join(values), traceback.format_exc())
