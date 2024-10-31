@@ -110,7 +110,7 @@ def MakeResult(info):
         return MESSAGES_USR["empty-result"]
 
     for record in info:
-        (username, left_days, left_hours, giga_left) = record.values()
+        (username, _, left_days, left_hours, giga_left) = record.values()
         account_info = ""
 
         if left_days is not None and left_days > 0:
