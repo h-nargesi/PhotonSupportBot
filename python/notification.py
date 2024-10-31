@@ -84,11 +84,22 @@ def SendWarningMessage(notif, message):
 
         remain = user.MakeResult([userinfo])
 
-        if chat_id > 0:
-            BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
-            USERS.AlertSent(username, VARIABLES.ADMIN, datetime.datetime.now(), 'user')
+        # if chat_id > 0:
+        #     if AllowToSendAlert(username, chat_id, 'user'):
+        #         BOT.send_message(chat_id, message.format(remain), parse_mode='markdown')
 
         if VARIABLES.ADMIN > 0:
-            BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
-            if chat_id > 0:
-                USERS.AlertSent(username, VARIABLES.ADMIN, datetime.datetime.now(), 'admin')
+            if AllowToSendAlert(username, VARIABLES.ADMIN, 'admin'):
+                BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
+
+def AllowToSendAlert(username, chat_id, type):
+    time = datetime.datetime.now()
+    type = 'alert-' + type
+    expire = time + datetime.timedelta(days=-1)
+    user_info = USERS.getUser(username, 'user-info')
+
+    if user_info is None or type not in user_info or expire > user_info[type]:
+        USERS.alertSent(username, chat_id, time, type)
+        return True
+
+    return False

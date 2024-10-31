@@ -45,7 +45,7 @@ def SaveData(title, object):
 
     file_name = GetFilePath('data', title + '.json')
     with open(file_name, "w+", encoding="utf-8") as file:
-        json.dump(object, file)
+        json.dump(object, file, default=str)
 
 def getTextFile(category, file_name):
     file_name = GetFilePath(category, file_name)
@@ -65,7 +65,7 @@ def copyFromTemp(category, file_name):
     parts = file_name.split('.')
     parts[0] += "-template"
     temp_name = ".".join(parts)
-    
+
     file_path = GetFilePath(category, file_name)
     temp_path = GetFilePath(category, temp_name)
 

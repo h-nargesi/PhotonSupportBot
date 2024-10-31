@@ -48,7 +48,7 @@ class UserCache:
         if len(keys) == 0: return self.CHATS[chat_id]
         else: return UserCache.__get_safe(self.CHATS[chat_id], list(keys))
 
-    def set(self, username, chat_id):
+    def set(self, username, chat_id, save=True):
         if username is not None:
             if username not in self.USERS:
                 self.USERS[username] = { 'name': username, 'chat-id': chat_id }
@@ -65,13 +65,16 @@ class UserCache:
                 self.CHATS[chat_id]['latest-user-name'] = username
                 self.CHATS[chat_id]['users'][username] = self.USERS[username]
 
+        if save: files.SaveData('users', { 'users': self.USERS, 'chats': self.CHATS })
+
     def initPayment(self, username, chat_id):
         self.set(username, chat_id)
-
         if 'payment' not in self.USERS[username]:
             self.USERS[username]['payment'] = dict()
 
         self.USERS[username]['payment']['user'] = username
+
+        files.SaveData('users', { 'users': self.USERS, 'chats': self.CHATS })
 
     def initQueryInfo(self, chat_id):
         self.set(None, chat_id)
@@ -80,13 +83,16 @@ class UserCache:
 
         self.CHATS[chat_id]['chat-info']['tries'] = 0
 
-    def AlertSent(self, username, chat_id, time, type):
-        self.set(username, chat_id)
+        files.SaveData('users', { 'users': self.USERS, 'chats': self.CHATS })
 
+    def alertSent(self, username, chat_id, time, type):
+        self.set(username, chat_id)
         if 'user-info' not in self.USERS[username]:
             self.USERS[username]['user-info'] = dict()
 
-        self.USERS[username]['user-info']['alert-' + type] = time
+        self.USERS[username]['user-info'][type] = time
+
+        files.SaveData('users', { 'users': self.USERS, 'chats': self.CHATS })
 
     def __get_safe(cache, keys):
         key = keys.pop(0)
