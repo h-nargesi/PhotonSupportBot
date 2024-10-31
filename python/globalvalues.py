@@ -4,97 +4,105 @@ import files
 class GlobalVariables:
     ADMIN = -2
 
+class UserCache:
+    # USER
+    # [username: string] = {
+    #     name: string,
+    #     chat-id: int,
+    #     payment: {
+    #         user: string,
+    #         info: string,
+    #     },
+    #     user-info: {
+    #         alert-admin: datetime,
+    #         alert-user: datetime,
+    #     }
+    # }
+    USERS = dict()
+
+    # CHAT
+    # [chat-id: int] = {
+    #     chat-id: int,
+    #     latest-user-name: string,
+    #     chat-info: {
+    #         query: string,
+    #         tries: int,
+    #     }
+    #     users: [username: string] = User
+    # }
+    CHATS = dict()
+
+    def getUser(self, username, *keys):
+        if username is None: return None
+        elif username not in self.USERS:
+            self.set(username, None)
+
+        if len(keys) == 0: return self.USERS[username]
+        else: return UserCache.__get_safe(self.USERS[username], list(keys))
+
+    def getChat(self, chat_id, *keys):
+        if chat_id is None: return None
+        elif chat_id not in self.CHATS:
+            self.set(None, chat_id)
+
+        if len(keys) == 0: return self.CHATS[chat_id]
+        else: return UserCache.__get_safe(self.CHATS[chat_id], list(keys))
+
+    def set(self, username, chat_id):
+        if username is not None:
+            if username not in self.USERS:
+                self.USERS[username] = { 'name': username, 'chat-id': chat_id }
+            elif chat_id is not None:
+                self.USERS[username]['chat-id'] = chat_id
+
+        if chat_id is not None:
+            if chat_id not in self.CHATS:
+                self.CHATS[chat_id] = {
+                    'chat-id': chat_id,
+                    'users': dict()
+                }
+            if username is not None:
+                self.CHATS[chat_id]['latest-user-name'] = username
+                self.CHATS[chat_id]['users'][username] = self.USERS[username]
+
+    def initPayment(self, username, chat_id):
+        self.set(username, chat_id)
+
+        if 'payment' not in self.USERS[username]:
+            self.USERS[username]['payment'] = dict()
+
+        self.USERS[username]['payment']['user'] = username
+
+    def initQueryInfo(self, chat_id):
+        self.set(None, chat_id)
+        if 'chat-info' not in self.CHATS[chat_id]:
+            self.CHATS[chat_id]['chat-info'] = dict()
+
+        self.CHATS[chat_id]['chat-info']['tries'] = 0
+
+    def AlertSent(self, username, chat_id, time, type):
+        self.set(username, chat_id)
+
+        if 'user-info' not in self.USERS[username]:
+            self.USERS[username]['user-info'] = dict()
+
+        self.USERS[username]['user-info']['alert-' + type] = time
+
+    def __get_safe(cache, keys):
+        key = keys.pop(0)
+        if key not in cache: return None
+
+        cache = cache[key]
+        if cache is None or len(keys) < 1: return cache
+        else: return UserCache.__get_safe(cache, keys)
+
 TOKEN = files.GetToken()
 BOT = telebot.TeleBot(TOKEN)
 MESSAGES = files.GetMessages()
-USERS = dict()
-USERS_BY_NAME = dict()
 VARIABLES = GlobalVariables()
 CONFIGURATION = files.GetConfiguration()
-
-# USER
-# {
-#     name: string,
-#     payment: {
-#         chat_id: int,
-#         user: string,
-#         info: string,
-#     },
-#     user-info: {
-#         query: string,
-#         tries: int,
-#         alert-admin: datetime,
-#         alert-user: datetime,
-#     }
-# }
-
-def SafeGet(chat_id, *keys):
-    if chat_id not in USERS or len(keys) == 0:
-        return None
-
-    return safeGet(USERS[chat_id], list(keys))
-
-def safeGet(cache, keys):
-
-    key = keys.pop(0)
-    if key not in cache: return None
-
-    cache = cache[key]
-    if cache is None or len(keys) < 1: return cache
-    else: return safeGet(cache, keys)
-
-def GetUserByName(username):
-    chat_id = USERS_BY_NAME[username] if username in USERS_BY_NAME else -1
-
-    if chat_id not in USERS or USERS[chat_id]['name'] != username:
-        chat_id = -1
-        for id in USERS:
-            if USERS[id]['name'] == username:
-                USERS_BY_NAME[username] = id
-                files.SaveData('users-by-name', USERS_BY_NAME)
-                chat_id = id
-                break
-
-    return int(chat_id)
-
-def AddUser(chat_id, username, save=True):
-    if chat_id < 0: return 
-
-    if chat_id not in USERS:
-        USERS[chat_id] = { 'name': username }
-    
-    elif username is not None:
-        USERS[chat_id]['name'] = username
-
-    if save: files.SaveData('users', USERS)
-
-def InitPayment(chat_id, username):
-    AddUser(chat_id, None, False)
-
-    if 'payment' not in USERS[chat_id]:
-        USERS[chat_id]['payment'] = dict()
-
-    USERS[chat_id]['payment']['username'] = username
-    files.SaveData('users', USERS)
-    
-def InitQueryInfo(chat_id):
-    AddUser(chat_id, None, False)
-
-    if 'user-info' not in USERS[chat_id]:
-        USERS[chat_id]['user-info'] = dict()
-    
-    USERS[chat_id]['user-info']['tries'] = 0
-    files.SaveData('users', USERS)
-
-def AlertSent(chat_id, time, type):
-    AddUser(chat_id, None, False)
-
-    if 'user-info' not in USERS[chat_id]:
-        USERS[chat_id]['user-info'] = dict()
-    
-    USERS[chat_id]['user-info']['alert-' + type] = time
-    files.SaveData('users', USERS)
+USERS = UserCache()
 
 def GetLogInfo(chat_id):
-    username = 'ADMIN' if chat_id == VARIABLES.ADMIN else SafeGet(chat_id, 'name')
+    username = 'ADMIN' if chat_id == VARIABLES.ADMIN else USERS.getChat(chat_id, 'latest-user-name')
     return { 'userid': chat_id, 'username': username }

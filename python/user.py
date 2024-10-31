@@ -4,7 +4,7 @@ import re
 import traceback
 import globalvalues as gv
 
-from globalvalues import BOT, MESSAGES, VARIABLES
+from globalvalues import BOT, MESSAGES, USERS, VARIABLES
 
 MESSAGES_USR = None
 
@@ -18,9 +18,8 @@ def GetUserInfo(message):
         request_text = message.text.split(" ")[1:]
 
         username = secret = None
-        
-        if message.chat.id != VARIABLES.ADMIN:
-            gv.InitQueryInfo(message.chat.id)
+
+        USERS.initQueryInfo(message.chat.id)
 
         if len(request_text) > 0:
             username = request_text[0]
@@ -35,13 +34,13 @@ def GetUserInfo(message):
         log.error('[user]: %s', traceback.format_exc(), **gv.GetLogInfo(message.chat.id))
 
 def userInfoSteps(message, username, secret):
-    tries = gv.SafeGet(message.chat.id, 'user-info', 'tries')
+    tries = USERS.getChat(message.chat.id, 'chat-info', 'tries')
     if tries is not None and tries > 3:
         BOT.send_message(message.chat.id, MESSAGES_USR['exit'], parse_mode='markdown')
         return
     else:
-        user_info = gv.SafeGet(message.chat.id, 'user-info')
-        user_info['tries'] = tries + 1 if tries is not None else 0
+        chat_info = USERS.getChat(message.chat.id, 'chat-info')
+        chat_info['tries'] = tries + 1 if tries is not None else 0
 
     if username is None:
         BOT.send_message(message.chat.id, MESSAGES_USR['get-user-name'], parse_mode='markdown')
@@ -62,9 +61,9 @@ def userInfoSteps(message, username, secret):
         else: info = database.GetUserInfoByPassword(username, secret)
 
     if len(info) == 1 and message.chat.id != VARIABLES.ADMIN:
-        gv.AddUser(message.chat.id, info[0][0])
-    
-    result = MakeResult(message.chat.id, info)
+        USERS.set(info[0][0], message.chat.id)
+
+    result = MakeResult(info)
 
     log.info('[user]: (%s, %s)', username, secret, **gv.GetLogInfo(message.chat.id))
 
@@ -78,9 +77,9 @@ def checkUserName(message, username):
     if re.search("^\\d+$", username):
         while len(username) < 4: username = "0" + username
         username = "_" + username + "%"
-    
-    user_info_query = gv.SafeGet(message.chat.id, 'user-info')
-    user_info_query['query'] = username
+
+    chat_info_query = USERS.getChat(message.chat.id, 'chat-info')
+    chat_info_query['query'] = username
 
     if username is None:
         BOT.send_message(message.chat.id, MESSAGES_USR["invalid-account-name"], parse_mode='markdown')
@@ -88,8 +87,8 @@ def checkUserName(message, username):
     return username
 
 def getSecret(message):
-    user_info_query = gv.SafeGet(message.chat.id, 'user-info', 'query')
-    userInfoSteps(message, user_info_query, message.text)
+    chat_info_query = USERS.getChat(message.chat.id, 'chat-info', 'query')
+    userInfoSteps(message, chat_info_query, message.text)
 
 def checkSecret(secret):
     isphone = re.search("^\\+?\\d+$", secret)
@@ -104,7 +103,7 @@ def checkSecret(secret):
 
     return (isphone, secret)
 
-def MakeResult(chat_id, info):
+def MakeResult(info):
     result = []
 
     if info is None or len(info) == 0:
@@ -122,7 +121,7 @@ def MakeResult(chat_id, info):
 
         if len(account_info) > 0: account_info = "{} remains".format(account_info[5:])
         else: account_info = "*no limit!*"
-        
+
         result.append("{}: {}".format(username.replace('_', '\\_'), account_info))
 
     return "\n".join(result)

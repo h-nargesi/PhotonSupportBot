@@ -4,9 +4,8 @@ import threading
 import database
 import user
 import log
-import globalvalues as gv
 
-from globalvalues import BOT, MESSAGES, VARIABLES
+from globalvalues import BOT, MESSAGES, USERS, VARIABLES
 
 MESSAGES_NOTIF = None
 
@@ -38,7 +37,7 @@ def TrafficNextNotif():
 def CheckMonthlyUsers():
     user_info = database.GetAllMonthlyUserInfo(-10)
     if user_info is None or len(user_info) == 0: return {}
-    
+
     result = {}
     for user in user_info:
         result[user[0]] = user
@@ -78,17 +77,18 @@ def SendWarningMessage(notif, message):
 
     for username in notif:
         userinfo = notif[username]
-        chat_id = gv.GetUserByName(username)
+        chat_id = USERS.getUser(username, 'chat-id')
+        chat_id = int(chat_id) if chat_id is not None else -1
 
         log.info('expiring warning: (%s, chat: %s) %s', username, chat_id, userinfo)
 
-        remain = user.MakeResult(chat_id, [userinfo])
+        remain = user.MakeResult([userinfo])
 
         if chat_id > 0:
             BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
-            gv.AlertSent(VARIABLES.ADMIN, datetime.datetime.now(), 'user')
+            USERS.AlertSent(username, VARIABLES.ADMIN, datetime.datetime.now(), 'user')
 
         if VARIABLES.ADMIN > 0:
             BOT.send_message(VARIABLES.ADMIN, message.format(remain), parse_mode='markdown')
             if chat_id > 0:
-                gv.AlertSent(VARIABLES.ADMIN, datetime.datetime.now(), 'admin')
+                USERS.AlertSent(username, VARIABLES.ADMIN, datetime.datetime.now(), 'admin')
