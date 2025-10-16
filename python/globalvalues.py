@@ -1,5 +1,6 @@
 import telebot
 import files
+from telebot import apihelper
 
 class GlobalVariables:
     ADMIN = -2
@@ -108,6 +109,12 @@ MESSAGES = files.GetMessages()
 VARIABLES = GlobalVariables()
 CONFIGURATION = files.GetConfiguration()
 USERS = UserCache()
+
+if 'proxy' in CONFIGURATION.keys() and CONFIGURATION['proxy'] is not None:
+    apihelper.proxy = {
+        'http': CONFIGURATION['proxy'],
+        'https': CONFIGURATION['proxy']
+    }
 
 def GetLogInfo(chat_id):
     username = 'ADMIN' if chat_id == VARIABLES.ADMIN else USERS.getChat(chat_id, 'latest-user-name')

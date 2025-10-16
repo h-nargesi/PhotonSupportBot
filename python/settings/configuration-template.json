@@ -1,3 +1,4 @@
 {
-  "cache-seconds": 60
+  "cache-seconds": 60,
+  "proxy": null
 }
