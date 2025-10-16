@@ -1,15 +1,22 @@
 import telebot
 import files
+from telebot import apihelper
 
 class GlobalVariables:
     ADMIN = -1
 
 TOKEN = files.GetToken()
-BOT = telebot.TeleBot(TOKEN)
+CONFIGURATION = files.getConfiguration()
 MESSAGES = files.getMessages()
 USERS = dict()
 VARIABLES = GlobalVariables()
-CONFIGURATION = files.getConfiguration()
+
+BOT = telebot.TeleBot(TOKEN)
+if 'proxy' in CONFIGURATION.keys() and CONFIGURATION['proxy'] is not None:
+    apihelper.proxy = {
+        'http': CONFIGURATION['proxy'],
+        'https': CONFIGURATION['proxy']
+    }
 
 # USER
 # {
